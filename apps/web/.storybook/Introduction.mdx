@@ -1,0 +1,66 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design System/Introduction" />
+
+# UstaTop Design System
+
+**Version:** 1.0 · **Sprint:** S01 · **Sana:** 2026-05-14
+
+---
+
+## Maqsad
+
+UstaTop.uz'ning barcha sahifalarida **izchil visual til** va **accessible** komponentlarni ta'minlash.
+
+---
+
+## Token ishlatish
+
+### Rang (Color)
+```css
+/* Brand */
+bg-brand-500     /* Asosiy ko'k */
+text-brand-700   /* To'q ko'k */
+
+/* Trust tiers — HECH QACHON hardcoded rang yozmang */
+text-trust-verified   /* Yashil */
+text-trust-pro        /* Oltin */
+text-trust-premium    /* Binafsha */
+
+/* Semantic */
+text-success   text-warning   text-danger   text-info
+bg-success-bg  bg-warning-bg  bg-danger-bg  bg-info-bg
+```
+
+### Tipografiya (Typography)
+```tsx
+<h1 className="font-display text-4xl font-bold">  {/* Manrope */}
+<p className="font-sans text-base">               {/* Inter */}
+<code className="font-mono text-sm">             {/* Monospace */}
+```
+
+### Motion
+```css
+transition-all duration-[var(--motion-fast)]     /* 150ms */
+transition-all duration-[var(--motion-normal)]   /* 300ms */
+```
+
+---
+
+## Komponent kategoriyalari
+
+| Kategoriya | Maqsad |
+|-----------|--------|
+| **UI/** | shadcn primitives — Button, Input, Dialog, ... |
+| **Domain/** | UstaTop-spesifik — MasterCard, TrustBadge, RatingStars, ... |
+| **Layout/** | SectionHeader, Nav, ... |
+
+---
+
+## Qoidalar
+
+1. `any` TypeScript tipi — **TAQIQLANGAN**
+2. Hardcoded rang (`text-[#2463eb]`) — **TAQIQLANGAN** → `text-brand-500` ishlating
+3. Inline style — **TAQIQLANGAN** → Tailwind utility
+4. Har komponent: `aria-label` yoki matnli kontent
+5. Har fayl: `.stories.tsx` + `.test.tsx`

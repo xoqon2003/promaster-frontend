@@ -1,102 +1,165 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@ustatop/ui/button";
-import styles from "./page.module.css";
+'use client';
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import { MasterCard } from '@/components/domain/master-card/master-card';
+import { RatingStars } from '@/components/domain/rating-stars';
+import { StatusBadge } from '@/components/domain/status-badge';
+import { TrustBadge } from '@/components/domain/trust-badge';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { SectionHeader } from '@/components/layout/section-header';
+import { SearchX } from 'lucide-react';
+import type { MasterData } from '@/components/domain/master-card/master-card';
+import type { OrderStatus } from '@/components/domain/status-badge';
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
+const DEMO_MASTERS: MasterData[] = [
+  {
+    id: '1',
+    name: 'Bobur Toshmatov',
+    rating: 4.8,
+    reviewCount: 124,
+    trustLevel: 'verified',
+    categoryName: 'Santexnik',
+    priceFrom: 50000,
+    isOnline: true,
+    responseTime: '~15 daqiqa',
+  },
+  {
+    id: '2',
+    name: 'Sherzod Karimov',
+    rating: 4.9,
+    reviewCount: 312,
+    trustLevel: 'pro',
+    categoryName: 'Elektrik',
+    priceFrom: 80000,
+    isOnline: true,
+    responseTime: '~5 daqiqa',
+  },
+  {
+    id: '3',
+    name: 'Dilnoza Yusupova',
+    rating: 5.0,
+    reviewCount: 89,
+    trustLevel: 'premium',
+    categoryName: 'Dizayner',
+    priceFrom: 150000,
+    isOnline: false,
+    responseTime: '~2 soat',
+  },
+];
 
+const ORDER_STATUSES: OrderStatus[] = [
+  'pending',
+  'accepted',
+  'in_progress',
+  'done',
+  'cancelled',
+  'disputed',
+];
+
+export default function Page() {
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+    <main className="bg-background min-h-screen">
+      {/* Header */}
+      <header className="border-border bg-background/80 sticky top-0 z-10 flex items-center justify-between border-b px-6 py-3 backdrop-blur-sm">
+        <span className="font-display text-brand-500 text-lg font-bold">UstaTop.uz</span>
+        <ThemeToggle variant="dropdown" />
+      </header>
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      <div className="mx-auto max-w-4xl space-y-12 px-6 py-10">
+        {/* Trust badges */}
+        <section aria-labelledby="trust-heading">
+          <SectionHeader title="Ishonch darajalari" subtitle="Trust tier tokenlar" as="h2" />
+          <div className="mt-4 flex flex-wrap gap-3">
+            <TrustBadge level="basic" size="lg" />
+            <TrustBadge level="verified" size="lg" />
+            <TrustBadge level="pro" size="lg" />
+            <TrustBadge level="premium" size="lg" />
+          </div>
+        </section>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+        <Separator />
+
+        {/* Rating stars */}
+        <section aria-labelledby="rating-heading">
+          <SectionHeader title="Reyting yulduzlari" as="h2" />
+          <div className="mt-4 flex flex-col gap-3">
+            <RatingStars rating={5.0} reviewCount={312} showValue size="lg" />
+            <RatingStars rating={4.8} reviewCount={124} showValue size="md" />
+            <RatingStars rating={3.5} reviewCount={18} showValue size="sm" />
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Order statuses */}
+        <section aria-labelledby="status-heading">
+          <SectionHeader title="Buyurtma holatlari" as="h2" />
+          <div className="mt-4 flex flex-wrap gap-3">
+            {ORDER_STATUSES.map((s) => (
+              <StatusBadge key={s} status={s} />
+            ))}
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Spinner */}
+        <section aria-labelledby="spinner-heading">
+          <SectionHeader title="Yuklanish indikatorlari" as="h2" />
+          <div className="mt-4 flex items-center gap-6">
+            <Spinner size="sm" />
+            <Spinner size="md" />
+            <Spinner size="lg" />
+            <Spinner size="xl" />
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Master cards */}
+        <section aria-labelledby="masters-heading">
+          <SectionHeader
+            title="Mashhur ustalar"
+            subtitle="Toshkent bo'yicha top ustalar"
+            as="h2"
+            action={
+              <span className="text-brand-500 text-sm font-medium">Barchasini ko&apos;rish →</span>
+            }
+          />
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {DEMO_MASTERS.map((master) => (
+              <MasterCard key={master.id} master={master} onContactPress={() => {}} />
+            ))}
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Loading skeletons */}
+        <section aria-labelledby="skeleton-heading">
+          <SectionHeader title="Skeleton holati" as="h2" />
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <MasterCard master={DEMO_MASTERS[0]!} isLoading />
+            <MasterCard master={DEMO_MASTERS[0]!} isLoading />
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Empty state */}
+        <section aria-labelledby="empty-heading">
+          <SectionHeader title="Bo'sh holat" as="h2" />
+          <div className="border-border mt-4 rounded-2xl border">
+            <EmptyState
+              icon={SearchX}
+              title="Hech narsa topilmadi"
+              description="Qidiruv so'zini o'zgartiring yoki filtrlarni tozalang"
             />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer>
-    </div>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
