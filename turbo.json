@@ -7,15 +7,26 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "test": {
+      "outputs": ["coverage/**"]
+    },
+    "e2e": {
+      "dependsOn": ["build"],
+      "env": ["CI"]
     }
-  }
+  },
+  "globalEnv": ["CI", "NODE_ENV", "ANALYZE"]
 }
