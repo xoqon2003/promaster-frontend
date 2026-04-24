@@ -28,5 +28,5 @@
       "env": ["CI"]
     }
   },
-  "globalEnv": ["CI", "NODE_ENV", "ANALYZE"]
+  "globalEnv": ["CI", "NODE_ENV", "ANALYZE", "MOCK_OTP", "AUTH_SECRET", "NEXTAUTH_URL"]
 }
