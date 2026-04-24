@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { useState } from 'react';
 import { ThemeProvider } from './theme-provider';
 
@@ -42,17 +43,19 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
   const [queryClient] = useState(() => makeQueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </SessionProvider>
-    </QueryClientProvider>
+    <NuqsAdapter>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </SessionProvider>
+      </QueryClientProvider>
+    </NuqsAdapter>
   );
 }
