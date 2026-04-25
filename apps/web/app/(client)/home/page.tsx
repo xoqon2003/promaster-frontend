@@ -1,9 +1,12 @@
 'use client';
 
-import { useCurrentUser } from '@/lib/hooks/use-current-user';
-import { Spinner } from '@/components/ui/spinner';
-import { Button } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
+
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { useCurrentUser } from '@/lib/hooks/use-current-user';
+
+import { Hero } from './hero';
 
 export default function ClientHomePage() {
   const { user, isLoading } = useCurrentUser();
@@ -17,13 +20,12 @@ export default function ClientHomePage() {
   }
 
   return (
-    <main className="bg-background min-h-screen p-6">
-      <div className="mx-auto max-w-2xl space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-bold">Salom, {user?.name ?? 'Mijoz'}! 👋</h1>
-            <p className="text-muted-foreground text-sm">{user?.phone}</p>
-          </div>
+    <main className="bg-background min-h-screen">
+      <Hero />
+
+      <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
+        <div className="text-muted-foreground flex items-center justify-between text-xs">
+          <span>{user?.phone}</span>
           <Button
             variant="outline"
             size="sm"
@@ -34,10 +36,10 @@ export default function ClientHomePage() {
         </div>
 
         <div className="border-border rounded-2xl border p-8 text-center">
-          <p className="text-muted-foreground text-lg">🚧 Bosh sahifa — Sprint 3 da quriladi</p>
-          <p className="text-muted-foreground mt-2 text-sm">
-            Auth ishlayapti ✅ · Role: {user?.role}
+          <p className="text-muted-foreground text-lg">
+            🚧 Kategoriyalar va tavsiyalar — T3.10 / T3.11
           </p>
+          <p className="text-muted-foreground mt-2 text-sm">Role: {user?.role}</p>
         </div>
       </div>
     </main>
