@@ -29,6 +29,17 @@ vi.mock('@/lib/hooks/use-masters', () => ({
   useMasters: () => mockUseMasters(),
 }));
 
+// FilterPanel ichki hook'lari — SearchView'da ham mock kerak
+const mockUseCategories = vi.fn();
+vi.mock('@/lib/hooks/use-categories', () => ({
+  useCategories: () => mockUseCategories(),
+}));
+
+const mockUseGeolocation = vi.fn();
+vi.mock('@/lib/hooks/use-geolocation', () => ({
+  useGeolocation: () => mockUseGeolocation(),
+}));
+
 function defaultFiltersReturn(overrides: { q?: string } = {}) {
   return {
     filters: {
@@ -79,6 +90,12 @@ beforeEach(() => {
   mockSetFilters.mockReset();
   mockUseSearchFilters.mockReset();
   mockUseMasters.mockReset();
+  mockUseCategories.mockReset();
+  mockUseGeolocation.mockReset();
+
+  // FilterPanel ichki hook'lari uchun minimal default'lar
+  mockUseCategories.mockReturnValue({ data: [], isPending: false });
+  mockUseGeolocation.mockReturnValue({ state: 'idle', position: null, request: vi.fn() });
 });
 
 // ─── SearchBar integration ───────────────────────────────────────────────────
@@ -198,7 +215,7 @@ describe('SearchView — result summary', () => {
 // ─── Layout structure ────────────────────────────────────────────────────────
 
 describe('SearchView — layout', () => {
-  it('sidebar (FilterPanel placeholder) va main hududlar mavjud', () => {
+  it('sidebar (FilterPanel) va main hududlar mavjud', () => {
     mockUseSearchFilters.mockReturnValue(defaultFiltersReturn());
     mockUseMasters.mockReturnValue(defaultMastersReturn({ total: 0 }));
 
@@ -207,7 +224,7 @@ describe('SearchView — layout', () => {
     });
 
     expect(screen.getByRole('complementary', { name: 'Filterlar' })).toBeInTheDocument();
-    expect(document.querySelector('[data-slot="filter-panel-placeholder"]')).not.toBeNull();
+    expect(document.querySelector('[data-slot="filter-panel"]')).not.toBeNull();
     expect(document.querySelector('[data-slot="search-main"]')).not.toBeNull();
   });
 });

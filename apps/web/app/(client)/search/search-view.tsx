@@ -28,6 +28,8 @@ import { useMasters } from '@/lib/hooks/use-masters';
 import { useSearchFilters } from '@/lib/hooks/use-search-filters';
 import { cn } from '@/lib/utils';
 
+import { FilterPanel, FilterPanelDrawer } from './filter-panel';
+
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const VIEW_OPTIONS = ['grid', 'map'] as const;
@@ -113,18 +115,6 @@ function ViewToggle({ value, onChange }: ViewToggleProps) {
 
 // ─── Placeholders (T3.13–T3.16 da real komponentlarga almashtiriladi) ────────
 
-function FilterPanelPlaceholder() {
-  return (
-    <div
-      data-slot="filter-panel-placeholder"
-      className="border-border bg-card text-muted-foreground rounded-2xl border p-4 text-sm"
-    >
-      <p className="text-foreground mb-1 font-semibold">Filterlar</p>
-      <p>🚧 T3.13 — Filter Panel keladi (kategoriya, narx, reyting, trust, online).</p>
-    </div>
-  );
-}
-
 function SortPlaceholder() {
   return (
     <div
@@ -201,6 +191,10 @@ export function SearchView() {
             />
           </div>
           <div className="flex items-center justify-end gap-2">
+            {/* Mobile: filter drawer trigger (desktop'da yashirin) */}
+            <div className="lg:hidden">
+              <FilterPanelDrawer />
+            </div>
             <SortPlaceholder />
             <ViewToggle value={view} onChange={handleViewChange} />
           </div>
@@ -215,7 +209,7 @@ export function SearchView() {
           data-slot="search-sidebar"
         >
           <div className="sticky top-20">
-            <FilterPanelPlaceholder />
+            <FilterPanel />
           </div>
         </aside>
 
