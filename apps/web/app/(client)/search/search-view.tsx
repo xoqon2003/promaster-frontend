@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { SortDropdown } from '@/components/features/sort-dropdown';
 
 import { FilterPanel, FilterPanelDrawer } from './filter-panel';
+import { MapView } from './map-view';
 import { ResultGrid } from './result-grid';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -116,19 +117,6 @@ function ViewToggle({ value, onChange }: ViewToggleProps) {
   );
 }
 
-// ─── Placeholders (T3.13–T3.16 da real komponentlarga almashtiriladi) ────────
-
-function MapViewPlaceholder({ count }: { count: number }) {
-  return (
-    <div
-      data-slot="map-view-placeholder"
-      className="border-border bg-card text-muted-foreground flex min-h-[400px] items-center justify-center rounded-2xl border text-sm"
-    >
-      🗺️ T3.16 — Yandex Map keladi. Pin&apos;lar: {count} ta.
-    </div>
-  );
-}
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function SearchView() {
@@ -204,7 +192,10 @@ export function SearchView() {
           </div>
 
           {view === 'map' ? (
-            <MapViewPlaceholder count={total} />
+            <MapView
+              masters={data?.masters ?? []}
+              onSwitchToList={() => handleViewChange('grid')}
+            />
           ) : (
             <ResultGrid
               data={data}

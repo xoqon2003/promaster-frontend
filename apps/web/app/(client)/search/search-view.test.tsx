@@ -34,6 +34,15 @@ vi.mock('@/components/features/sort-dropdown', () => ({
   SortDropdown: () => <div data-testid="sort-dropdown-mock">Sort</div>,
 }));
 
+// MapView — SSR-safe dynamic import, testda mock
+vi.mock('./map-view', () => ({
+  MapView: () => (
+    <div data-slot="map-view-placeholder" data-testid="map-view-mock">
+      Map
+    </div>
+  ),
+}));
+
 // ResultGrid — SearchView'da mock (o'z hook'larini chaqirmaydi, props orqali)
 vi.mock('./result-grid', () => ({
   ResultGrid: ({
