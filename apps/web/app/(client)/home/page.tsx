@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useCurrentUser } from '@/lib/hooks/use-current-user';
 
+import { CategoriesRail } from './categories-rail';
 import { Hero } from './hero';
 
 export default function ClientHomePage() {
@@ -22,6 +23,7 @@ export default function ClientHomePage() {
   return (
     <main className="bg-background min-h-screen">
       <Hero />
+      <CategoriesRail />
 
       <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
         <div className="text-muted-foreground flex items-center justify-between text-xs">
@@ -36,9 +38,7 @@ export default function ClientHomePage() {
         </div>
 
         <div className="border-border rounded-2xl border p-8 text-center">
-          <p className="text-muted-foreground text-lg">
-            🚧 Kategoriyalar va tavsiyalar — T3.10 / T3.11
-          </p>
+          <p className="text-muted-foreground text-lg">🚧 Tavsiyalar — T3.11</p>
           <p className="text-muted-foreground mt-2 text-sm">Role: {user?.role}</p>
         </div>
       </div>
