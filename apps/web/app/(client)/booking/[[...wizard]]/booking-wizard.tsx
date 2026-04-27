@@ -31,6 +31,7 @@ import { Step2Address } from './step-2-address';
 import { Step3Photos } from './step-3-photos';
 import { Step4Price } from './step-4-price';
 import { Step5Contact } from './step-5-contact';
+import { Step6Confirm } from './step-6-confirm';
 import { Stepper } from './stepper';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -128,6 +129,8 @@ export function BookingWizard() {
           <Step4Price />
         ) : step === 5 ? (
           <Step5Contact onComplete={() => void goNext()} />
+        ) : step === 6 ? (
+          <Step6Confirm onEditStep={(target) => void goToStep(target)} />
         ) : (
           <StepPlaceholder step={step} title={stepContent.title} taskId={stepContent.taskId} />
         )}
@@ -142,45 +145,50 @@ export function BookingWizard() {
         </div>
 
         {/* ─── Navigation ─────────────────────────────────────────────── */}
-        <nav
-          aria-label="Wizard navigatsiyasi"
-          className="border-border bg-card sticky bottom-0 -mx-4 mt-6 border-t px-4 py-3 sm:mx-auto sm:max-w-2xl sm:rounded-2xl sm:border"
-        >
-          <div className="flex items-center justify-between gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => void goBack()}
-              data-testid="wizard-back-btn"
-            >
-              <ArrowLeft aria-hidden="true" className="mr-2 h-4 w-4" />
-              {isFirstStep ? 'Bekor qilish' : 'Orqaga'}
-            </Button>
-
-            {isFormStep ? (
-              // RHF form submit — onComplete callback ichida goNext chaqiriladi
-              <Button
-                type="submit"
-                form={WIZARD_FORM_ID}
-                disabled={isLastStep}
-                data-testid="wizard-next-btn"
-              >
-                {isLastStep ? 'Yakunlash' : 'Davom etish'}
-                <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
-              </Button>
-            ) : (
+        {/* Step 6 — submit tugma stepning o'zida; wizard navigatsiyasi
+            yashiriladi (faqat "Orqaga" qoldirish ham mumkin lekin UX
+            sodda bo'lsin). */}
+        {!isLastStep && (
+          <nav
+            aria-label="Wizard navigatsiyasi"
+            className="border-border bg-card sticky bottom-0 -mx-4 mt-6 border-t px-4 py-3 sm:mx-auto sm:max-w-2xl sm:rounded-2xl sm:border"
+          >
+            <div className="flex items-center justify-between gap-3">
               <Button
                 type="button"
-                onClick={() => void goNext()}
-                disabled={isLastStep}
-                data-testid="wizard-next-btn"
+                variant="outline"
+                onClick={() => void goBack()}
+                data-testid="wizard-back-btn"
               >
-                {isLastStep ? 'Yakunlash' : 'Davom etish'}
-                <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
+                <ArrowLeft aria-hidden="true" className="mr-2 h-4 w-4" />
+                {isFirstStep ? 'Bekor qilish' : 'Orqaga'}
               </Button>
-            )}
-          </div>
-        </nav>
+
+              {isFormStep ? (
+                // RHF form submit — onComplete callback ichida goNext chaqiriladi
+                <Button
+                  type="submit"
+                  form={WIZARD_FORM_ID}
+                  disabled={isLastStep}
+                  data-testid="wizard-next-btn"
+                >
+                  {isLastStep ? 'Yakunlash' : 'Davom etish'}
+                  <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={() => void goNext()}
+                  disabled={isLastStep}
+                  data-testid="wizard-next-btn"
+                >
+                  {isLastStep ? 'Yakunlash' : 'Davom etish'}
+                  <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </nav>
+        )}
       </main>
     </div>
   );
