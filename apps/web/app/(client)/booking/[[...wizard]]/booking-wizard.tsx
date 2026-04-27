@@ -29,6 +29,7 @@ import { type WizardStep, useWizardStep } from '@/lib/hooks/use-wizard-step';
 import { Step1Service, WIZARD_FORM_ID } from './step-1-service';
 import { Step2Address } from './step-2-address';
 import { Step3Photos } from './step-3-photos';
+import { Step4Price } from './step-4-price';
 import { Stepper } from './stepper';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -115,13 +116,15 @@ export function BookingWizard() {
       />
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        {/* Step 1, 2, 3 — ulangan; qolganlari T4.07+ da almashtiriladi */}
+        {/* Step 1, 2, 3, 4 — ulangan; qolganlari T4.08+ da almashtiriladi */}
         {step === 1 ? (
           <Step1Service onComplete={() => void goNext()} />
         ) : step === 2 ? (
           <Step2Address onComplete={() => void goNext()} />
         ) : step === 3 ? (
           <Step3Photos onComplete={() => void goNext()} />
+        ) : step === 4 ? (
+          <Step4Price />
         ) : (
           <StepPlaceholder step={step} title={stepContent.title} taskId={stepContent.taskId} />
         )}
