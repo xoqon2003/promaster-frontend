@@ -34,6 +34,11 @@ vi.mock('@/components/features/sort-dropdown', () => ({
   SortDropdown: () => <div data-testid="sort-dropdown-mock">Sort</div>,
 }));
 
+// ResultDrawer — useMaster + nuqs ichki hook'lari, testda mock
+vi.mock('./result-drawer', () => ({
+  ResultDrawer: () => <div data-testid="result-drawer-mock" />,
+}));
+
 // MapView — SSR-safe dynamic import, testda mock
 vi.mock('./map-view', () => ({
   MapView: () => (

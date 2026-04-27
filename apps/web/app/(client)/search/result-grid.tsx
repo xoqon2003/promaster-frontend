@@ -21,6 +21,7 @@
  * `useMasters` state'ini qayta ishlatadi (ikki marta fetch yo'q).
  */
 import { Loader2 } from 'lucide-react';
+import { parseAsString, useQueryState } from 'nuqs';
 
 import { MasterCard } from '@/components/domain/master-card/master-card';
 import { Button } from '@/components/ui/button';
@@ -104,6 +105,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ResultGrid({ data, isPending, isError, onRetry, onLoadMore }: ResultGridProps) {
+  const [, setMasterId] = useQueryState('masterId', parseAsString);
   if (isError) {
     return <ErrorState onRetry={onRetry} />;
   }
@@ -127,7 +129,7 @@ export function ResultGrid({ data, isPending, isError, onRetry, onLoadMore }: Re
       >
         {masters.map((master) => (
           <li key={master.id}>
-            <MasterCard master={master} />
+            <MasterCard master={master} onPress={() => void setMasterId(master.id)} />
           </li>
         ))}
       </ul>

@@ -32,6 +32,7 @@ import { SortDropdown } from '@/components/features/sort-dropdown';
 
 import { FilterPanel, FilterPanelDrawer } from './filter-panel';
 import { MapView } from './map-view';
+import { ResultDrawer } from './result-drawer';
 import { ResultGrid } from './result-grid';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -207,6 +208,9 @@ export function SearchView() {
           )}
         </main>
       </div>
+
+      {/* Quick Profile Drawer — ?masterId URL param boshqaradi */}
+      <ResultDrawer />
     </div>
   );
 }
