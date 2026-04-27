@@ -12,11 +12,23 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { withNuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { Master, SearchResponse } from '@/lib/masters/schemas';
 
-import { ResultGrid } from './result-grid';
+import { ResultGrid, type ResultGridProps } from './result-grid';
+
+// ─── Render helper ───────────────────────────────────────────────────────────
+//
+// `ResultGrid` ichida `useQueryState` (nuqs) ishlatilgani uchun test
+// muhitida nuqs adapter'ni Provider sifatida ko'tarish shart. Aks holda
+// `[nuqs] nuqs requires an adapter to work with your framework.` xatosi.
+
+function renderResultGrid(props: ResultGridProps, searchParams = '') {
+  const Wrapper = withNuqsTestingAdapter({ searchParams });
+  return render(<ResultGrid {...props} />, { wrapper: Wrapper });
+}
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -69,9 +81,11 @@ const defaultProps = {
 
 describe('ResultGrid — loading', () => {
   it("isPending — 8 ta skeleton ko'rinadi, MasterCard yo'q", () => {
-    const { container } = render(
-      <ResultGrid {...defaultProps} data={undefined} isPending={true} />,
-    );
+    const { container } = renderResultGrid({
+      ...defaultProps,
+      data: undefined,
+      isPending: true,
+    });
 
     expect(container.querySelectorAll('[data-slot="master-card-skeleton"]')).toHaveLength(8);
     expect(container.querySelectorAll('[data-slot="master-card"]')).toHaveLength(0);
@@ -82,16 +96,32 @@ describe('ResultGrid — loading', () => {
 
 describe('ResultGrid — success', () => {
   it('3 ta usta uchun MasterCard render qilinadi', () => {
-    const { container } = render(<ResultGrid {...defaultProps} />);
+    const { container } = renderResultGrid(defaultProps);
 
     expect(container.querySelectorAll('[data-slot="master-card"]')).toHaveLength(3);
   });
 
   it("usta nomlari ko'rinadi", () => {
-    render(<ResultGrid {...defaultProps} />);
+    renderResultGrid(defaultProps);
 
     expect(screen.getByText('Bobur Toshmatov')).toBeInTheDocument();
     expect(screen.getByText('Aziz Yuldashev')).toBeInTheDocument();
+  });
+
+  it('MasterCard bosilganda URL`ga masterId yoziladi', async () => {
+    const onUrlUpdate = vi.fn();
+    const Wrapper = withNuqsTestingAdapter({ searchParams: '', onUrlUpdate });
+    const user = userEvent.setup();
+
+    render(<ResultGrid {...defaultProps} />, { wrapper: Wrapper });
+
+    // MasterCard ichidagi 'Profilni ochish' interaktiv element
+    const cards = screen.getAllByRole('button', { name: /Bobur Toshmatov/ });
+    await user.click(cards[0]!);
+
+    expect(onUrlUpdate).toHaveBeenCalled();
+    const event = onUrlUpdate.mock.lastCall![0];
+    expect(event.searchParams.get('masterId')).toBe('m1');
   });
 });
 
@@ -99,7 +129,10 @@ describe('ResultGrid — success', () => {
 
 describe('ResultGrid — empty', () => {
   it("masters bo'sh bo'lsa \"Natija topilmadi\" ko'rinadi", () => {
-    const { container } = render(<ResultGrid {...defaultProps} data={makeResponse([])} />);
+    const { container } = renderResultGrid({
+      ...defaultProps,
+      data: makeResponse([]),
+    });
 
     expect(container.querySelector('[data-slot="result-grid-empty"]')).toHaveTextContent(
       /Natija topilmadi/,
@@ -112,7 +145,7 @@ describe('ResultGrid — empty', () => {
 
 describe('ResultGrid — error', () => {
   it("isError — alert + retry tugmasi ko'rinadi", () => {
-    render(<ResultGrid {...defaultProps} data={undefined} isError={true} />);
+    renderResultGrid({ ...defaultProps, data: undefined, isError: true });
 
     expect(screen.getByRole('alert')).toHaveTextContent(/yuklab bo'lmadi/i);
     expect(screen.getByRole('button', { name: /Qayta urinib ko'ring/ })).toBeInTheDocument();
@@ -122,7 +155,7 @@ describe('ResultGrid — error', () => {
     const onRetry = vi.fn();
     const user = userEvent.setup();
 
-    render(<ResultGrid {...defaultProps} data={undefined} isError={true} onRetry={onRetry} />);
+    renderResultGrid({ ...defaultProps, data: undefined, isError: true, onRetry });
 
     await user.click(screen.getByRole('button', { name: /Qayta urinib ko'ring/ }));
     expect(onRetry).toHaveBeenCalledTimes(1);
@@ -133,15 +166,19 @@ describe('ResultGrid — error', () => {
 
 describe('ResultGrid — pagination', () => {
   it("hasMore=false — 'Ko'proq' tugmasi yo'q", () => {
-    render(
-      <ResultGrid {...defaultProps} data={makeResponse(SAMPLE_MASTERS, { hasMore: false })} />,
-    );
+    renderResultGrid({
+      ...defaultProps,
+      data: makeResponse(SAMPLE_MASTERS, { hasMore: false }),
+    });
 
     expect(screen.queryByTestId('load-more-btn')).toBeNull();
   });
 
   it("hasMore=true — 'Ko'proq ko'rsatish' tugmasi ko'rinadi", () => {
-    render(<ResultGrid {...defaultProps} data={makeResponse(SAMPLE_MASTERS, { hasMore: true })} />);
+    renderResultGrid({
+      ...defaultProps,
+      data: makeResponse(SAMPLE_MASTERS, { hasMore: true }),
+    });
 
     expect(screen.getByTestId('load-more-btn')).toBeInTheDocument();
     expect(screen.getByTestId('load-more-btn')).toHaveTextContent(/Ko'proq/);
@@ -151,13 +188,11 @@ describe('ResultGrid — pagination', () => {
     const onLoadMore = vi.fn();
     const user = userEvent.setup();
 
-    render(
-      <ResultGrid
-        {...defaultProps}
-        data={makeResponse(SAMPLE_MASTERS, { hasMore: true })}
-        onLoadMore={onLoadMore}
-      />,
-    );
+    renderResultGrid({
+      ...defaultProps,
+      data: makeResponse(SAMPLE_MASTERS, { hasMore: true }),
+      onLoadMore,
+    });
 
     await user.click(screen.getByTestId('load-more-btn'));
     expect(onLoadMore).toHaveBeenCalledTimes(1);
