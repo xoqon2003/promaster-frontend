@@ -30,6 +30,7 @@ import { Step1Service, WIZARD_FORM_ID } from './step-1-service';
 import { Step2Address } from './step-2-address';
 import { Step3Photos } from './step-3-photos';
 import { Step4Price } from './step-4-price';
+import { Step5Contact } from './step-5-contact';
 import { Stepper } from './stepper';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -105,7 +106,7 @@ export function BookingWizard() {
   // Form-driven steps (RHF) — pastki "Davom etish" tugmasi form submit'ga
   // ulanadi (`form={WIZARD_FORM_ID}`). Boshqa steplarda esa to'g'ridan-to'g'ri
   // `goNext()` chaqiriladi.
-  const isFormStep = step === 1 || step === 2 || step === 3;
+  const isFormStep = step === 1 || step === 2 || step === 3 || step === 5;
 
   return (
     <div data-slot="booking-wizard" className="bg-background min-h-screen">
@@ -116,7 +117,7 @@ export function BookingWizard() {
       />
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        {/* Step 1, 2, 3, 4 — ulangan; qolganlari T4.08+ da almashtiriladi */}
+        {/* Step 1..5 — ulangan; step 6 T4.09 da almashtiriladi */}
         {step === 1 ? (
           <Step1Service onComplete={() => void goNext()} />
         ) : step === 2 ? (
@@ -125,6 +126,8 @@ export function BookingWizard() {
           <Step3Photos onComplete={() => void goNext()} />
         ) : step === 4 ? (
           <Step4Price />
+        ) : step === 5 ? (
+          <Step5Contact onComplete={() => void goNext()} />
         ) : (
           <StepPlaceholder step={step} title={stepContent.title} taskId={stepContent.taskId} />
         )}
