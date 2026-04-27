@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { SortDropdown } from '@/components/features/sort-dropdown';
 
 import { FilterPanel, FilterPanelDrawer } from './filter-panel';
+import { ResultGrid } from './result-grid';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -117,17 +118,6 @@ function ViewToggle({ value, onChange }: ViewToggleProps) {
 
 // ─── Placeholders (T3.13–T3.16 da real komponentlarga almashtiriladi) ────────
 
-function ResultGridPlaceholder({ count }: { count: number }) {
-  return (
-    <div
-      data-slot="result-grid-placeholder"
-      className="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center text-sm"
-    >
-      🚧 T3.15 — Result Grid keladi. Hozircha mavjud: {count} ta usta.
-    </div>
-  );
-}
-
 function MapViewPlaceholder({ count }: { count: number }) {
   return (
     <div
@@ -149,7 +139,7 @@ export function SearchView() {
     parseAsStringEnum<ViewMode>([...VIEW_OPTIONS]).withDefault(DEFAULT_VIEW),
   );
 
-  const { data, isPending, isError } = useMasters(apiFilter);
+  const { data, isPending, isError, refetch } = useMasters(apiFilter);
 
   const handleSubmit = useCallback(
     (q: string) => {
@@ -216,7 +206,13 @@ export function SearchView() {
           {view === 'map' ? (
             <MapViewPlaceholder count={total} />
           ) : (
-            <ResultGridPlaceholder count={data?.masters.length ?? 0} />
+            <ResultGrid
+              data={data}
+              isPending={isPending}
+              isError={isError}
+              onRetry={() => refetch()}
+              onLoadMore={() => setFilters({ page: filters.page + 1 })}
+            />
           )}
         </main>
       </div>

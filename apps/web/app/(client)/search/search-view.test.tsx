@@ -34,6 +34,23 @@ vi.mock('@/components/features/sort-dropdown', () => ({
   SortDropdown: () => <div data-testid="sort-dropdown-mock">Sort</div>,
 }));
 
+// ResultGrid — SearchView'da mock (o'z hook'larini chaqirmaydi, props orqali)
+vi.mock('./result-grid', () => ({
+  ResultGrid: ({
+    isPending,
+    isError,
+  }: {
+    isPending: boolean;
+    isError: boolean;
+    data?: unknown;
+  }) => (
+    <div data-testid="result-grid-mock">
+      {isPending && <span>Loading...</span>}
+      {isError && <span>Error</span>}
+    </div>
+  ),
+}));
+
 // FilterPanel ichki hook'lari — SearchView'da ham mock kerak
 const mockUseCategories = vi.fn();
 vi.mock('@/lib/hooks/use-categories', () => ({
@@ -150,7 +167,7 @@ describe('SearchView — view toggle', () => {
     const mapRadio = screen.getByRole('radio', { name: /Xarita/ });
     expect(gridRadio).toHaveAttribute('aria-checked', 'true');
     expect(mapRadio).toHaveAttribute('aria-checked', 'false');
-    expect(document.querySelector('[data-slot="result-grid-placeholder"]')).not.toBeNull();
+    expect(document.querySelector('[data-testid="result-grid-mock"]')).not.toBeNull();
     expect(document.querySelector('[data-slot="map-view-placeholder"]')).toBeNull();
   });
 
@@ -160,7 +177,7 @@ describe('SearchView — view toggle', () => {
     });
 
     expect(document.querySelector('[data-slot="map-view-placeholder"]')).not.toBeNull();
-    expect(document.querySelector('[data-slot="result-grid-placeholder"]')).toBeNull();
+    expect(document.querySelector('[data-testid="result-grid-mock"]')).toBeNull();
   });
 
   it("Xarita radio bosilsa MapView placeholder ko'rinadi", async () => {
@@ -171,7 +188,7 @@ describe('SearchView — view toggle', () => {
     });
 
     // Boshlang'ichda grid placeholder
-    expect(document.querySelector('[data-slot="result-grid-placeholder"]')).not.toBeNull();
+    expect(document.querySelector('[data-testid="result-grid-mock"]')).not.toBeNull();
 
     await user.click(screen.getByRole('radio', { name: /Xarita/ }));
 

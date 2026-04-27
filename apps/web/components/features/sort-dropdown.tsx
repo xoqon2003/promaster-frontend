@@ -18,13 +18,7 @@
  */
 import { ArrowUpDown, MapPin } from 'lucide-react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { useGeolocation } from '@/lib/hooks/use-geolocation';
 import { useSearchFilters } from '@/lib/hooks/use-search-filters';
 import type { SortOption } from '@/lib/masters/schemas';
