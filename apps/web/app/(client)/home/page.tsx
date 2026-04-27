@@ -8,6 +8,7 @@ import { useCurrentUser } from '@/lib/hooks/use-current-user';
 
 import { CategoriesRail } from './categories-rail';
 import { Hero } from './hero';
+import { RecommendedGrid } from './recommended-grid';
 
 export default function ClientHomePage() {
   const { user, isLoading } = useCurrentUser();
@@ -24,8 +25,9 @@ export default function ClientHomePage() {
     <main className="bg-background min-h-screen">
       <Hero />
       <CategoriesRail />
+      <RecommendedGrid />
 
-      <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
+      <div className="mx-auto max-w-6xl px-4 py-6">
         <div className="text-muted-foreground flex items-center justify-between text-xs">
           <span>{user?.phone}</span>
           <Button
@@ -35,11 +37,6 @@ export default function ClientHomePage() {
           >
             Chiqish
           </Button>
-        </div>
-
-        <div className="border-border rounded-2xl border p-8 text-center">
-          <p className="text-muted-foreground text-lg">🚧 Tavsiyalar — T3.11</p>
-          <p className="text-muted-foreground mt-2 text-sm">Role: {user?.role}</p>
         </div>
       </div>
     </main>
