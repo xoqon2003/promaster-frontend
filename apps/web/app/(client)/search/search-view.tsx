@@ -28,6 +28,8 @@ import { useMasters } from '@/lib/hooks/use-masters';
 import { useSearchFilters } from '@/lib/hooks/use-search-filters';
 import { cn } from '@/lib/utils';
 
+import { SortDropdown } from '@/components/features/sort-dropdown';
+
 import { FilterPanel, FilterPanelDrawer } from './filter-panel';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -115,17 +117,6 @@ function ViewToggle({ value, onChange }: ViewToggleProps) {
 
 // ─── Placeholders (T3.13–T3.16 da real komponentlarga almashtiriladi) ────────
 
-function SortPlaceholder() {
-  return (
-    <div
-      data-slot="sort-placeholder"
-      className="border-border bg-card text-muted-foreground rounded-lg border px-3 py-1.5 text-xs"
-    >
-      🚧 Saralash (T3.14)
-    </div>
-  );
-}
-
 function ResultGridPlaceholder({ count }: { count: number }) {
   return (
     <div
@@ -195,7 +186,7 @@ export function SearchView() {
             <div className="lg:hidden">
               <FilterPanelDrawer />
             </div>
-            <SortPlaceholder />
+            <SortDropdown />
             <ViewToggle value={view} onChange={handleViewChange} />
           </div>
         </div>

@@ -29,6 +29,11 @@ vi.mock('@/lib/hooks/use-masters', () => ({
   useMasters: () => mockUseMasters(),
 }));
 
+// SortDropdown — SearchView'da ham mock kerak (useGeolocation ishlatadi)
+vi.mock('@/components/features/sort-dropdown', () => ({
+  SortDropdown: () => <div data-testid="sort-dropdown-mock">Sort</div>,
+}));
+
 // FilterPanel ichki hook'lari — SearchView'da ham mock kerak
 const mockUseCategories = vi.fn();
 vi.mock('@/lib/hooks/use-categories', () => ({
