@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { useBookingDraft } from '@/lib/hooks/use-booking-draft';
 import { type WizardStep, useWizardStep } from '@/lib/hooks/use-wizard-step';
 
+import { Step1Service, WIZARD_FORM_ID } from './step-1-service';
 import { Stepper } from './stepper';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -98,6 +99,11 @@ export function BookingWizard() {
 
   const stepContent = STEP_CONTENT[step];
 
+  // Form-driven steps (RHF) — pastki "Davom etish" tugmasi form submit'ga
+  // ulanadi (`form={WIZARD_FORM_ID}`). Boshqa steplarda esa to'g'ridan-to'g'ri
+  // `goNext()` chaqiriladi.
+  const isFormStep = step === 1; // T4.05+ da step 2/3/5 ham qo'shiladi
+
   return (
     <div data-slot="booking-wizard" className="bg-background min-h-screen">
       <Stepper
@@ -107,7 +113,12 @@ export function BookingWizard() {
       />
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        <StepPlaceholder step={step} title={stepContent.title} taskId={stepContent.taskId} />
+        {/* Step 1 — T4.04 ulangan; qolgan steplar T4.05+ da almashtiriladi */}
+        {step === 1 ? (
+          <Step1Service onComplete={() => void goNext()} />
+        ) : (
+          <StepPlaceholder step={step} title={stepContent.title} taskId={stepContent.taskId} />
+        )}
 
         {/* Debug info — production'da olib tashlanadi (T4.12 telemetry'dan keyin) */}
         <div
@@ -134,15 +145,28 @@ export function BookingWizard() {
               {isFirstStep ? 'Bekor qilish' : 'Orqaga'}
             </Button>
 
-            <Button
-              type="button"
-              onClick={() => void goNext()}
-              disabled={isLastStep}
-              data-testid="wizard-next-btn"
-            >
-              {isLastStep ? 'Yakunlash' : 'Davom etish'}
-              <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
-            </Button>
+            {isFormStep ? (
+              // RHF form submit — onComplete callback ichida goNext chaqiriladi
+              <Button
+                type="submit"
+                form={WIZARD_FORM_ID}
+                disabled={isLastStep}
+                data-testid="wizard-next-btn"
+              >
+                {isLastStep ? 'Yakunlash' : 'Davom etish'}
+                <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={() => void goNext()}
+                disabled={isLastStep}
+                data-testid="wizard-next-btn"
+              >
+                {isLastStep ? 'Yakunlash' : 'Davom etish'}
+                <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4" />
+              </Button>
+            )}
           </div>
         </nav>
       </main>
