@@ -228,7 +228,7 @@ describe('Step6Confirm — submit', () => {
     });
   });
 
-  it("submit xato — toast (alert) ko'rinadi, redirect yo'q", async () => {
+  it('network xato — toast + retry tugma', async () => {
     mockCreate.mockRejectedValue(new Error('Network failed'));
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
@@ -236,9 +236,48 @@ describe('Step6Confirm — submit', () => {
     await user.click(screen.getByTestId('step-6-submit-btn'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('submit-error')).toHaveTextContent(/Network failed/);
+      const alert = screen.getByTestId('submit-error');
+      expect(alert).toHaveAttribute('data-error-kind', 'network');
+      expect(screen.getByTestId('submit-error-action')).toHaveTextContent(/qayta urinib/i);
       expect(mockPush).not.toHaveBeenCalled();
     });
+  });
+
+  it('validation xato — Tahrirlash tugma, onEditStep chaqiriladi', async () => {
+    mockCreate.mockRejectedValue(
+      new Error('BookingDraft validation failed: contact.phone: invalid'),
+    );
+    const onEditStep = vi.fn();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    render(<Step6Confirm onEditStep={onEditStep} />);
+    await user.click(screen.getByTestId('step-6-submit-btn'));
+
+    await waitFor(() => {
+      const alert = screen.getByTestId('submit-error');
+      expect(alert).toHaveAttribute('data-error-kind', 'validation');
+    });
+
+    await user.click(screen.getByTestId('submit-error-action'));
+    expect(onEditStep).toHaveBeenCalledWith(5);
+  });
+
+  it("master-not-found — Qidiruvga qaytish tugma /search ga yo'naltiradi", async () => {
+    mockCreate.mockRejectedValue(new Error('Master not found: m_x'));
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    render(<Step6Confirm onEditStep={vi.fn()} />);
+    await user.click(screen.getByTestId('step-6-submit-btn'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('submit-error')).toHaveAttribute(
+        'data-error-kind',
+        'master-not-found',
+      );
+    });
+
+    await user.click(screen.getByTestId('submit-error-action'));
+    expect(mockPush).toHaveBeenCalledWith('/search');
   });
 });
 

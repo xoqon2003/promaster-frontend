@@ -34,6 +34,7 @@ import { useCurrentUser } from '@/lib/hooks/use-current-user';
 import { bookingApi } from '@/lib/booking/api-client';
 import { calculatePriceRange } from '@/lib/booking/price-calc';
 import { isBookingDraftComplete, MAX_PHOTOS } from '@/lib/booking/schemas';
+import { classifySubmitError, type SubmitErrorInfo } from '@/lib/booking/submit-error';
 import { findSubServiceLabel } from '@/lib/booking/sub-services';
 import { cn } from '@/lib/utils';
 
@@ -104,7 +105,7 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
   const { data: master } = useMaster(draft.masterId);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<SubmitErrorInfo | null>(null);
 
   const isComplete = isBookingDraftComplete(draft);
 
@@ -122,9 +123,24 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
       const booking = await bookingApi.create(draft, { clientId: user.id });
       router.push(`/orders/${booking.id}`);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Yuborib bo`lmadi');
+      const info = classifySubmitError(err);
+      setSubmitError(info);
       setIsSubmitting(false);
     }
+  };
+
+  const handleErrorAction = () => {
+    if (!submitError) return;
+    if (submitError.kind === 'master-not-found') {
+      router.push('/search');
+      return;
+    }
+    if (submitError.redirectStep) {
+      onEditStep(submitError.redirectStep);
+      return;
+    }
+    // Retry — submit qayta chaqiriladi
+    void handleSubmit();
   };
 
   return (
@@ -251,13 +267,30 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
       {/* ── Submit ────────────────────────────────────────────────── */}
       <div className="border-border bg-card rounded-2xl border p-5">
         {submitError && (
-          <p
+          <div
             role="alert"
             data-testid="submit-error"
+            data-error-kind={submitError.kind}
             className="text-destructive bg-destructive/5 border-destructive/20 mb-3 rounded-lg border p-3 text-sm"
           >
-            {submitError}
-          </p>
+            <p data-testid="submit-error-message">{submitError.message}</p>
+            {(submitError.retryable ||
+              submitError.redirectStep ||
+              submitError.kind === 'master-not-found') && (
+              <button
+                type="button"
+                onClick={handleErrorAction}
+                data-testid="submit-error-action"
+                className="bg-destructive hover:bg-destructive/90 mt-2 inline-flex h-8 items-center rounded-md px-3 text-xs font-medium text-white transition-colors"
+              >
+                {submitError.kind === 'master-not-found'
+                  ? 'Qidiruvga qaytish'
+                  : submitError.redirectStep
+                    ? `Qadam ${submitError.redirectStep}'ni tahrirlash`
+                    : "Qayta urinib ko'rish"}
+              </button>
+            )}
+          </div>
         )}
 
         <button
