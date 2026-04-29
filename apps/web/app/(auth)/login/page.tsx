@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: 'Kirish',
 };
 
+// `LoginForm` `useSearchParams` ishlatadi (A03 callbackUrl) — SSG'dan istisno
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   return (
     <AuthCard title="Kirish" subtitle="Telefon raqamingizni kiriting">

@@ -2,7 +2,7 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Hammer, UserRound } from 'lucide-react';
 import { SignupSchema } from '@/lib/auth/schemas';
@@ -29,6 +29,9 @@ const ROLE_OPTIONS = [
 
 export function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // A03: signup oldingi flow'dan kelgan callbackUrl'ni hurmat qiladi
+  const callbackUrl = searchParams?.get('callbackUrl') ?? null;
   const { data: session, update } = useSession();
 
   const {
@@ -51,7 +54,7 @@ export function SignupForm() {
     await update({ name: data.name, role: data.role });
 
     const home = data.role === 'pro' ? '/dashboard' : '/home';
-    router.push(home);
+    router.push(callbackUrl ?? home);
   };
 
   return (
