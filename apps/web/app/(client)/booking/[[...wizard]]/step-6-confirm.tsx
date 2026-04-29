@@ -102,13 +102,19 @@ export interface Step6ConfirmProps {
 export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
   const router = useRouter();
   const { draft } = useBookingDraft();
-  const { user } = useCurrentUser();
+  const { user, isLoading: isAuthLoading } = useCurrentUser();
   const { data: master } = useMaster(draft.masterId);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<SubmitErrorInfo | null>(null);
 
   const isComplete = isBookingDraftComplete(draft);
+  /**
+   * Submit faqat session yuklab bo'linganda yoqiladi (A02 — useSession
+   * hydration race oldini olish). `handleSubmit` `!user` bilan jim
+   * qaytib ketmasligi uchun tugma'ning o'zi bossa bo'lmaydi.
+   */
+  const canSubmit = isComplete && !isSubmitting && !isAuthLoading && Boolean(user);
 
   const subServiceLabel = draft.service
     ? findSubServiceLabel(draft.service.categoryId, draft.service.subServiceId)
@@ -307,12 +313,12 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
         <button
           type="button"
           onClick={() => void handleSubmit()}
-          disabled={!isComplete || isSubmitting}
+          disabled={!canSubmit}
           data-testid="step-6-submit-btn"
           className={cn(
             'flex h-12 w-full items-center justify-center gap-2 rounded-lg text-base font-semibold transition-colors',
             'focus-visible:ring-brand-500 focus-visible:ring-2 focus-visible:outline-none',
-            isComplete && !isSubmitting
+            canSubmit
               ? 'bg-brand-500 hover:bg-brand-600 text-white'
               : 'bg-muted text-muted-foreground cursor-not-allowed',
           )}
@@ -322,6 +328,11 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
               <Loader2 aria-hidden="true" className="h-5 w-5 animate-spin" />
               Yuborilmoqda…
             </>
+          ) : isAuthLoading ? (
+            <>
+              <Loader2 aria-hidden="true" className="h-5 w-5 animate-spin" />
+              Tekshirilmoqda…
+            </>
           ) : (
             <>
               <CheckCircle2 aria-hidden="true" className="h-5 w-5" />
@@ -330,7 +341,7 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
           )}
         </button>
 
-        {!isComplete && (
+        {!isComplete && !isAuthLoading && (
           <p className="text-muted-foreground mt-2 text-center text-xs">
             Avval barcha majburiy bo&apos;limlarni to&apos;ldiring.
           </p>

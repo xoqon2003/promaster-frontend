@@ -281,6 +281,42 @@ describe('Step6Confirm — submit', () => {
   });
 });
 
+// ─── Auth guard (A02) ────────────────────────────────────────────────────────
+
+describe('Step6Confirm — auth guard', () => {
+  it("session yuklanayotganda submit disabled + 'Tekshirilmoqda…'", () => {
+    mockUseCurrentUser.mockReturnValue({
+      user: undefined,
+      isLoading: true,
+      isAuthenticated: false,
+      isClient: false,
+      isPro: false,
+      isAdmin: false,
+    });
+
+    render(<Step6Confirm onEditStep={vi.fn()} />);
+
+    const btn = screen.getByTestId('step-6-submit-btn');
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveTextContent(/tekshirilmoqda/i);
+  });
+
+  it("session yo'q (mehmon) — submit disabled, draft to'liq bo'lsa ham", () => {
+    mockUseCurrentUser.mockReturnValue({
+      user: undefined,
+      isLoading: false,
+      isAuthenticated: false,
+      isClient: false,
+      isPro: false,
+      isAdmin: false,
+    });
+
+    render(<Step6Confirm onEditStep={vi.fn()} />);
+
+    expect(screen.getByTestId('step-6-submit-btn')).toBeDisabled();
+  });
+});
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 describe('Step6Confirm — helpers', () => {
