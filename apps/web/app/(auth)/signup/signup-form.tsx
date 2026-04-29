@@ -50,7 +50,7 @@ export function SignupForm() {
     // Session'ni yangilaymiz
     await update({ name: data.name, role: data.role });
 
-    const home = data.role === 'pro' ? '/pro/dashboard' : '/client/home';
+    const home = data.role === 'pro' ? '/dashboard' : '/home';
     router.push(home);
   };
 

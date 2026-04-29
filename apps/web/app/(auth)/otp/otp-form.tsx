@@ -55,7 +55,7 @@ export function OtpForm({ phone }: OtpFormProps) {
       setIsLoading(false);
 
       if (result?.ok) {
-        router.push('/auth/signup');
+        router.push('/signup');
       } else {
         const remaining = attempts - 1;
         setAttempts(remaining);
@@ -114,7 +114,7 @@ export function OtpForm({ phone }: OtpFormProps) {
       {/* Back link */}
       <div className="text-center">
         <Link
-          href="/auth/login"
+          href="/login"
           className="text-muted-foreground hover:text-foreground text-sm transition-colors"
         >
           ← Raqamni o&apos;zgartirish

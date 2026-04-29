@@ -110,7 +110,7 @@ export const AsLink: Story = {
       emoji: '🎨',
       masterCount: 19,
     },
-    href: '/client/search?category=dizayn',
+    href: '/search?category=dizayn',
     onClick: undefined,
   },
   parameters: {

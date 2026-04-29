@@ -2,22 +2,47 @@ import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 import type { UserRole } from '@/lib/auth/schemas';
 
-// Himoyalangan route prefixlari
-const PROTECTED = ['/client', '/pro', '/admin'] as const;
+/**
+ * Auth flow sahifalari (logged-in foydalanuvchi → home redirect).
+ *
+ * App Router fayl strukturasi route group'lar (`(auth)`, `(client)`,
+ * `(pro)`) URL prefiks'ni stripsdir → barcha route'lar flat. Shuning
+ * uchun `/auth/login` emas, `/login` ishlatamiz.
+ */
+const AUTH_PAGES = new Set(['/login', '/otp', '/signup']);
 
-// Auth sahifalari (kirgan foydalanuvchi uchun yo'naltiriladi)
-const AUTH_PAGES = ['/auth/login', '/auth/otp', '/auth/signup'] as const;
+/**
+ * Himoyalangan route prefiks'lari. Default — public (marketing, search,
+ * booking flow ochiq, faqat oxirida step 5'da auth gate).
+ */
+const PROTECTED_PREFIXES = [
+  '/home', // client home
+  '/dashboard', // pro dashboard
+  '/moderation', // admin moderation
+  '/orders', // mijoz buyurtmalari
+  '/tracking', // realtime tracking (S05)
+  '/portfolio', // pro portfolio
+  '/calendar', // pro calendar
+  '/wallet', // wallet
+  '/profile', // user profile
+  '/chat', // messaging
+  '/disputes', // admin disputes
+  '/verifications', // admin verifications
+] as const;
 
-// Rol bo'yicha default redirect
+/** Rol bo'yicha home page. */
+const ROLE_HOME: Record<UserRole, string> = {
+  client: '/home',
+  pro: '/dashboard',
+  admin: '/moderation',
+};
+
 function homeByRole(role: UserRole | undefined): string {
-  switch (role) {
-    case 'pro':
-      return '/pro/dashboard';
-    case 'admin':
-      return '/admin/moderation';
-    default:
-      return '/client/home';
-  }
+  return role ? ROLE_HOME[role] : '/home';
+}
+
+function isProtectedPath(pathname: string): boolean {
+  return PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 // NextAuth v5: auth() wrapper pattern
@@ -28,34 +53,38 @@ export default auth((req) => {
   const pathname = nextUrl.pathname;
   const role = session?.user?.role as UserRole | undefined;
 
-  // 1. Himoyalangan route + kirmaganning harakat
-  const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
-  if (isProtected && !isLoggedIn) {
-    const loginUrl = new URL('/auth/login', nextUrl);
-    loginUrl.searchParams.set('callbackUrl', pathname);
+  // 1. Logged-in foydalanuvchi auth page'da → o'z home'iga redirect
+  if (isLoggedIn && AUTH_PAGES.has(pathname)) {
+    return NextResponse.redirect(new URL(homeByRole(role), nextUrl));
+  }
+
+  // 2. Himoyalangan route + kirmagan → /login (callbackUrl bilan)
+  if (isProtectedPath(pathname) && !isLoggedIn) {
+    const loginUrl = new URL('/login', nextUrl);
+    loginUrl.searchParams.set('callbackUrl', pathname + nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. Auth page'ga kirgan foydalanuvchi → home redirect
-  const isAuthPage = AUTH_PAGES.some((p) => pathname.startsWith(p));
-  if (isAuthPage && isLoggedIn) {
-    return NextResponse.redirect(new URL(homeByRole(role), nextUrl));
-  }
-
-  // 3. Rol bo'yicha cross-route guard
-  if (isLoggedIn && role === 'client' && pathname.startsWith('/pro')) {
-    return NextResponse.redirect(new URL('/client/home', nextUrl));
-  }
-  if (isLoggedIn && role === 'pro' && pathname.startsWith('/client')) {
-    return NextResponse.redirect(new URL('/pro/dashboard', nextUrl));
-  }
-  if (isLoggedIn && role !== 'admin' && pathname.startsWith('/admin')) {
-    return NextResponse.redirect(new URL(homeByRole(role), nextUrl));
+  // 3. Rol bo'yicha cross-route guard — boshqa rol'ning home'iga kirsa, o'zinikiga
+  if (isLoggedIn) {
+    if (pathname === '/home' && role !== 'client') {
+      return NextResponse.redirect(new URL(homeByRole(role), nextUrl));
+    }
+    if (pathname === '/dashboard' && role !== 'pro') {
+      return NextResponse.redirect(new URL(homeByRole(role), nextUrl));
+    }
+    if (pathname === '/moderation' && role !== 'admin') {
+      return NextResponse.redirect(new URL(homeByRole(role), nextUrl));
+    }
   }
 
   return NextResponse.next();
 });
 
+/**
+ * Matcher: API, statik fayllar va Next.js internal route'lardan tashqari
+ * hammasi. Public route'lar handler ichida `next()` orqali o'tkaziladi.
+ */
 export const config = {
-  matcher: ['/client/:path*', '/pro/:path*', '/admin/:path*', '/auth/:path*'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

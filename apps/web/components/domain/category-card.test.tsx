@@ -152,11 +152,11 @@ describe('CategoryCard — button variant (onClick)', () => {
 
 describe('CategoryCard — link variant (href)', () => {
   it('<a> element href bilan render qiladi', () => {
-    render(<CategoryCard category={ELEKTRIK} href="/client/search?category=elektrik" />);
+    render(<CategoryCard category={ELEKTRIK} href="/search?category=elektrik" />);
 
     const link = screen.getByRole('link', { name: /Elektrik/ });
     expect(link.tagName).toBe('A');
-    expect(link).toHaveAttribute('href', '/client/search?category=elektrik');
+    expect(link).toHaveAttribute('href', '/search?category=elektrik');
   });
 });
 

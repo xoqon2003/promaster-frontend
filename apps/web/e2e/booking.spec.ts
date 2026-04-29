@@ -82,11 +82,10 @@ function makeCompleteDraft(masterId: string = M1): TestDraft {
  * NextAuth `otp` credentials provider'iga to'g'ridan-to'g'ri POST orqali
  * login qiladi (UI flow'siz).
  *
- * Sabab: codebase'da `/auth/login` link/router.push'lari mavjud, lekin
- * App Router fayl strukturasi `app/(auth)/login/page.tsx` bo'lib, route
- * `/login` URL'iga maps bo'ladi. UI flow `/auth/otp` ga `router.push`
- * qiladi → 404. Shuning uchun E2E'da NextAuth API'ni to'g'ridan ishlatamiz
- * (mock-adapter `verifyOtp` shu yo'l bilan ham `findOrCreate` user yaratadi).
+ * App Router route group'lar (`(auth)`, `(client)`) URL prefiks'ni
+ * stripsdir → haqiqiy URL'lar flat: `/login`, `/otp`, `/signup`, `/home`,
+ * `/booking`. NextAuth API'ni to'g'ridan ishlatamiz (UI flow ham endi
+ * mavjud, lekin API bypass tezroq va test isolation'ga yaxshi mos keladi).
  *
  * Cookie'lar `page.request` orqali browser context'iga yoziladi —
  * keyingi `page.goto()` chaqiruvlari avtomatik authenticated.

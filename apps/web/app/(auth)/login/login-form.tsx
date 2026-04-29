@@ -35,7 +35,7 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     const phone = `+998${data.phone}`;
     await mockAdapter.sendOtp(phone);
-    router.push(`/auth/otp?phone=${encodeURIComponent(phone)}`);
+    router.push(`/otp?phone=${encodeURIComponent(phone)}`);
   };
 
   return (
