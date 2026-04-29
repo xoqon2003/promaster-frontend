@@ -3,11 +3,11 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { z } from 'zod';
 import { PhoneInput } from '@/components/auth/phone-input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { mockAdapter } from '@/lib/auth/mock-adapter';
 
 // Login formasi uchun local schema (telefon raqam)
 const LoginFormSchema = z.object({
@@ -25,6 +25,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   // A03: callbackUrl mavjud bo'lsa OTP'ga forward — login zanjirini saqlaydi
   const callbackUrl = searchParams?.get('callbackUrl') ?? null;
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     control,
@@ -36,8 +37,19 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    setServerError(null);
     const phone = `+998${data.phone}`;
-    await mockAdapter.sendOtp(phone);
+    // T5.05: API endpoint orqali sendOtp — provider (mock | eskiz) avtomatik
+    const res = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone }),
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      setServerError(body.error ?? "SMS yuborib bo'lmadi");
+      return;
+    }
     const params = new URLSearchParams({ phone });
     if (callbackUrl) params.set('callbackUrl', callbackUrl);
     router.push(`/otp?${params.toString()}`);
@@ -57,6 +69,12 @@ export function LoginForm() {
           />
         )}
       />
+
+      {serverError && (
+        <p role="alert" className="text-destructive text-center text-sm">
+          {serverError}
+        </p>
+      )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
         {isSubmitting ? (
