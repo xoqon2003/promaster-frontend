@@ -1,6 +1,13 @@
-import { auth } from '@/auth';
+import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
+
+import { authConfig } from '@/auth.config';
 import type { UserRole } from '@/lib/auth/schemas';
+
+// Edge-safe `auth` — `auth.config.ts` faqat callbacks/pages/session,
+// Credentials provider va DB import'lari `auth.ts` da. Middleware
+// bundle'ga DB code'i oqmaydi (S05 T5.04 split).
+const { auth } = NextAuth(authConfig);
 
 /**
  * Auth flow sahifalari (logged-in foydalanuvchi → home redirect).
