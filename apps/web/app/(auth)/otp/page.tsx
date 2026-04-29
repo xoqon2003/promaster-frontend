@@ -10,16 +10,16 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 interface OtpPageProps {
-  searchParams: Promise<{ phone?: string }>;
+  searchParams: Promise<{ phone?: string; callbackUrl?: string }>;
 }
 
 export default async function OtpPage({ searchParams }: OtpPageProps) {
-  const { phone } = await searchParams;
+  const { phone, callbackUrl } = await searchParams;
   const maskedPhone = phone ? phone.replace(/(\+998\d{2})\d{5}(\d{2})/, '$1*****$2') : '';
 
   return (
     <AuthCard title="Tasdiqlash kodi" subtitle={`${maskedPhone} raqamiga SMS kod yuborildi`}>
-      <OtpForm phone={phone ?? ''} />
+      <OtpForm phone={phone ?? ''} callbackUrl={callbackUrl} />
     </AuthCard>
   );
 }

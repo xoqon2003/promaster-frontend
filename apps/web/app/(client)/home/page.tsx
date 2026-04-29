@@ -30,11 +30,7 @@ export default function ClientHomePage() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         <div className="text-muted-foreground flex items-center justify-between text-xs">
           <span>{user?.phone}</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => signOut({ callbackUrl: '/auth/login' })}
-          >
+          <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}>
             Chiqish
           </Button>
         </div>

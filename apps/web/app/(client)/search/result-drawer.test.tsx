@@ -5,7 +5,7 @@
  *  - masterId yo'q bo'lsa drawer yopiq
  *  - masterId bor bo'lsa drawer ochiq, usta nomi ko'rinadi
  *  - Loading state: skeleton
- *  - "To'liq profil" linki /client/masters/[id] ga
+ *  - "To'liq profil" linki /masters/[id] ga
  *  - "Yopish" tugmasi masterId ni null qiladi (URL clear)
  *  - portfolio va reviews section render qilinadi
  */
@@ -138,6 +138,6 @@ describe('ResultDrawer — content', () => {
     });
 
     const link = screen.getByTestId('drawer-full-profile-btn');
-    expect(link).toHaveAttribute('href', '/client/masters/m42');
+    expect(link).toHaveAttribute('href', '/masters/m42');
   });
 });

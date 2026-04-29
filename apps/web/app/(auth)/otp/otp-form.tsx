@@ -1,21 +1,30 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { OtpInput } from '@/components/auth/otp-input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { mockAdapter } from '@/lib/auth/mock-adapter';
+import type { UserRole } from '@/lib/auth/schemas';
 
 const OTP_TIMEOUT = 120; // 2 daqiqa
 
+const ROLE_HOME: Record<UserRole, string> = {
+  client: '/home',
+  pro: '/dashboard',
+  admin: '/moderation',
+};
+
 interface OtpFormProps {
   phone: string;
+  /** A03: login zanjirini saqlash — login'dan keyin shu URL'ga qaytadi. */
+  callbackUrl?: string;
 }
 
-export function OtpForm({ phone }: OtpFormProps) {
+export function OtpForm({ phone, callbackUrl }: OtpFormProps) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -55,7 +64,21 @@ export function OtpForm({ phone }: OtpFormProps) {
       setIsLoading(false);
 
       if (result?.ok) {
-        router.push('/auth/signup');
+        // A03: foydalanuvchi profili (name + role) bormi tekshiramiz.
+        // Bor bo'lsa — to'g'ridan callbackUrl/home; yo'q bo'lsa — /signup
+        // ga callbackUrl'ni forward qilamiz.
+        const session = await getSession();
+        const hasProfile = Boolean(session?.user?.name);
+        if (hasProfile) {
+          const role = session?.user?.role as UserRole | undefined;
+          const dest = callbackUrl ?? (role ? ROLE_HOME[role] : '/home');
+          router.push(dest);
+        } else {
+          const next = callbackUrl
+            ? `/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`
+            : '/signup';
+          router.push(next);
+        }
       } else {
         const remaining = attempts - 1;
         setAttempts(remaining);
@@ -67,7 +90,7 @@ export function OtpForm({ phone }: OtpFormProps) {
         );
       }
     },
-    [phone, router, attempts],
+    [phone, router, attempts, callbackUrl],
   );
 
   return (
@@ -114,7 +137,7 @@ export function OtpForm({ phone }: OtpFormProps) {
       {/* Back link */}
       <div className="text-center">
         <Link
-          href="/auth/login"
+          href="/login"
           className="text-muted-foreground hover:text-foreground text-sm transition-colors"
         >
           ← Raqamni o&apos;zgartirish

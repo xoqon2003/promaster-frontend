@@ -63,7 +63,7 @@ interface AuthGateProps {
 }
 
 function AuthGate({ callbackUrl }: AuthGateProps) {
-  const loginUrl = `/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  const loginUrl = `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`;
   return (
     <div
       data-slot="step-5-auth-gate"

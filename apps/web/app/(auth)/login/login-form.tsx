@@ -2,7 +2,7 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 import { PhoneInput } from '@/components/auth/phone-input';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,9 @@ type LoginFormData = z.infer<typeof LoginFormSchema>;
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // A03: callbackUrl mavjud bo'lsa OTP'ga forward — login zanjirini saqlaydi
+  const callbackUrl = searchParams?.get('callbackUrl') ?? null;
 
   const {
     control,
@@ -35,7 +38,9 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     const phone = `+998${data.phone}`;
     await mockAdapter.sendOtp(phone);
-    router.push(`/auth/otp?phone=${encodeURIComponent(phone)}`);
+    const params = new URLSearchParams({ phone });
+    if (callbackUrl) params.set('callbackUrl', callbackUrl);
+    router.push(`/otp?${params.toString()}`);
   };
 
   return (

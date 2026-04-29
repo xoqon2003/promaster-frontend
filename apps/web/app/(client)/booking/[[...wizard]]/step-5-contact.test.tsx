@@ -91,7 +91,7 @@ describe('Step5Contact — auth gate', () => {
   it('login link callbackUrl bilan', () => {
     render(<Step5Contact onComplete={vi.fn()} />);
     const link = screen.getByTestId('step-5-login-link') as HTMLAnchorElement;
-    expect(link.href).toMatch(/\/auth\/login/);
+    expect(link.href).toMatch(/\/login\?/);
     expect(link.href).toMatch(/callbackUrl=/);
   });
 });

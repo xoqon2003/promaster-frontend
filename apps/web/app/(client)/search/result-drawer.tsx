@@ -13,7 +13,7 @@
  *  - 3 ta portfolio placeholder rasm
  *  - 3 ta mock review (usta ma'lumotidan generatsiya)
  *  - "Bog'lanish" tugmasi (tel: link)
- *  - "To'liq profil" → /client/masters/[id] (S07 gacha 404)
+ *  - "To'liq profil" → /masters/[id] (S07 gacha 404)
  *
  * Desktop: right side Sheet (w-[400px])
  * Mobile: bottom Sheet
@@ -194,7 +194,7 @@ function DrawerContent({ master }: { master: Master }) {
         </Button>
         <Link
           data-testid="drawer-full-profile-btn"
-          href={`/client/masters/${master.id}`}
+          href={`/masters/${master.id}`}
           className="border-border text-foreground focus-visible:ring-brand-500 hover:bg-muted inline-flex w-full items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           To&apos;liq profil

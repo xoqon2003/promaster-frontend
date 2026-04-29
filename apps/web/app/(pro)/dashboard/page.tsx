@@ -26,11 +26,7 @@ export default function ProDashboardPage() {
             </h1>
             <p className="text-muted-foreground text-sm">{user?.phone}</p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => signOut({ callbackUrl: '/auth/login' })}
-          >
+          <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}>
             Chiqish
           </Button>
         </div>
