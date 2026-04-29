@@ -35,6 +35,7 @@ import { bookingApi } from '@/lib/booking/api-client';
 import { calculatePriceRange } from '@/lib/booking/price-calc';
 import { isBookingDraftComplete, MAX_PHOTOS } from '@/lib/booking/schemas';
 import { classifySubmitError, type SubmitErrorInfo } from '@/lib/booking/submit-error';
+import { trackBookingEvent } from '@/lib/booking/telemetry';
 import { findSubServiceLabel } from '@/lib/booking/sub-services';
 import { cn } from '@/lib/utils';
 
@@ -121,9 +122,19 @@ export function Step6Confirm({ onEditStep }: Step6ConfirmProps) {
     setSubmitError(null);
     try {
       const booking = await bookingApi.create(draft, { clientId: user.id });
+      trackBookingEvent('booking_submitted', {
+        bookingId: booking.id,
+        userId: user.id,
+        categoryId: draft.service?.categoryId,
+      });
       router.push(`/orders/${booking.id}`);
     } catch (err) {
       const info = classifySubmitError(err);
+      trackBookingEvent('booking_failed', {
+        errorKind: info.kind,
+        userId: user.id,
+        categoryId: draft.service?.categoryId,
+      });
       setSubmitError(info);
       setIsSubmitting(false);
     }
