@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Promaster Auth API
+  version: 0.5.0
+  description: >-
+    UstaTop.uz / Promaster — autentifikatsiya endpoint`lari.
+
+
+    S05 Backend Foundation sprint`ida yaratilgan. NextAuth v5 + custom OTP Credentials provider.
+    Mock yoki Eskiz.uz SMS adapter.
+
+
+    Source-of-truth: `apps/web/lib/auth/schemas.ts` zod schema`lar. Bu YAML auto-generated — qo`lda
+    tahrirlamang.
+
+
+    Regenerate: `pnpm --filter @ustatop/web openapi:gen`
+  contact:
+    name: Promaster
+    url: https://github.com/xoqon2003/promaster-frontend
+servers:
+  - url: https://promaster.vercel.app
+    description: Staging
+  - url: http://localhost:3000
+    description: Local dev
+tags:
+  - name: Auth
+    description: Custom auth endpoint`lar (Promaster-specific)
+  - name: Auth (NextAuth)
+    description: NextAuth v5 built-in endpoint`lar (handlers)
+  - name: Users
+    description: User profile boshqaruvi
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token
+      description: NextAuth JWT session token cookie. Login`dan keyin avtomatik o`rnatiladi.
+  schemas:
+    Phone:
+      type: string
+      minLength: 1
+      description: O'zbek telefon raqami E.164 formatda
+      example: "+998901234567"
+    UserRole:
+      type: string
+      enum:
+        - client
+        - pro
+        - admin
+      description: Foydalanuvchi roli
+      example: client
+    SessionUser:
+      type: object
+      properties:
+        id:
+          type: string
+        phone:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum:
+            - client
+            - pro
+            - admin
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - phone
+        - role
+      description: NextAuth session ichidagi foydalanuvchi ma`lumotlari
+    OtpCode:
+      type: string
+      pattern: ^\d{6}$
+      description: 6 raqamli OTP kod
+      example: "123456"
+    OtpVerify:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+        code:
+          type: string
+          pattern: ^\d{6}$
+      required:
+        - phone
+        - code
+      description: OTP tasdiqlash so`rovi (NextAuth Credentials provider input)
+    Signup:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+          pattern: ^[\p{L}\s'-]+$/u
+        role:
+          type: string
+          enum:
+            - client
+            - pro
+            - admin
+      required:
+        - name
+        - role
+      description: Profile yangilash so`rovi (rol + ism)
+    SendOtpResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          enum:
+            - true
+        expiresAt:
+          type: integer
+          description: Unix timestamp (ms) — OTP muddati
+          example: 1714400000000
+      required:
+        - ok
+        - expiresAt
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: SMS yuborib bo'lmadi
+        details:
+          type: array
+          items: {}
+      required:
+        - error
+    SendOtpRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+      required:
+        - phone
+    CsrfResponse:
+      type: object
+      properties:
+        csrfToken:
+          type: string
+          example: abc123def456
+      required:
+        - csrfToken
+    SessionResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            phone:
+              type: string
+            name:
+              type: string
+            role:
+              type: string
+              enum:
+                - client
+                - pro
+                - admin
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - phone
+            - role
+          description: Logged-in foydalanuvchi (yo`q bo`lsa session bo`sh)
+        expires:
+          type: string
+          format: date-time
+    UpdateProfileResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          enum:
+            - true
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            phone:
+              type: string
+            name:
+              type: string
+            role:
+              type: string
+              enum:
+                - client
+                - pro
+                - admin
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - id
+            - phone
+            - role
+      required:
+        - ok
+        - user
+  parameters: {}
+paths:
+  /api/auth/send-otp:
+    post:
+      description: OTP kod yuborish (mock yoki Eskiz SMS)
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendOtpRequest"
+      responses:
+        "200":
+          description: OTP yuborildi
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendOtpResponse"
+        "400":
+          description: Invalid request — telefon raqami noto`g`ri format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: SMS provider xatosi (Eskiz down yoki timeout)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/auth/csrf:
+    get:
+      description: CSRF token olish. NextAuth `Credentials` provider sign-in oldidan kerak.
+      tags:
+        - Auth (NextAuth)
+      responses:
+        "200":
+          description: CSRF token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CsrfResponse"
+  /api/auth/callback/otp:
+    post:
+      description: OTP kod bilan login. NextAuth `signIn("otp", { phone, code })` shu endpoint`ga POST
+        qiladi. Muvaffaqiyatda `next-auth.session-token` cookie o`rnatiladi.
+      tags:
+        - Auth (NextAuth)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  minLength: 1
+                code:
+                  type: string
+                  pattern: ^\d{6}$
+                csrfToken:
+                  type: string
+                callbackUrl:
+                  type: string
+                json:
+                  type: string
+                  enum:
+                    - "true"
+              required:
+                - phone
+                - code
+                - csrfToken
+      responses:
+        "200":
+          description: Login muvaffaqiyatli (session-token cookie o`rnatildi)
+        "302":
+          description: Login muvaffaqiyatli — callbackUrl`ga redirect
+        "401":
+          description: OTP noto`g`ri yoki muddati o`tgan
+  /api/auth/session:
+    get:
+      description: Joriy session ma`lumotlarini olish. Cookie orqali. Logout bo`lsa bo`sh `{}` qaytadi.
+      tags:
+        - Auth (NextAuth)
+      responses:
+        "200":
+          description: Session ma`lumotlari
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+  /api/auth/signout:
+    post:
+      description: Session cookie`ni tozalash. CSRF token kerak.
+      tags:
+        - Auth (NextAuth)
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                csrfToken:
+                  type: string
+                callbackUrl:
+                  type: string
+              required:
+                - csrfToken
+      responses:
+        "302":
+          description: Logout — callbackUrl`ga redirect (default `/login`)
+  /api/users/me:
+    patch:
+      description: "Joriy user`ning profilini yangilash (signup form submit). Authorization: NextAuth
+        session cookie majburiy."
+      tags:
+        - Users
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 50
+                  pattern: ^[\p{L}\s'-]+$/u
+                role:
+                  type: string
+                  enum:
+                    - client
+                    - pro
+                    - admin
+              required:
+                - name
+                - role
+      responses:
+        "200":
+          description: Profile yangilandi
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateProfileResponse"
+        "400":
+          description: Invalid body — name yoki role noto`g`ri format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized — session cookie yo`q
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: DB yoki internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+webhooks: {}
