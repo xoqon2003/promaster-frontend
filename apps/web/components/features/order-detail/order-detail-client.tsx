@@ -40,6 +40,11 @@ export interface OrderDetailClientProps {
   proName?: string;
   proRating?: number;
   locale?: SupportedLocale;
+  /**
+   * Storybook/test'da `useOrderStream` SSE connection'siz render qilish uchun.
+   * Production'da ishlatilmaydi (default false).
+   */
+  disableStream?: boolean;
 }
 
 export function OrderDetailClient({
@@ -49,17 +54,18 @@ export function OrderDetailClient({
   proName,
   proRating,
   locale = 'uz',
+  disableStream = false,
 }: OrderDetailClientProps) {
   const [order, setOrder] = useState<Order>(initialOrder);
   const [history, setHistory] = useState<OrderStatusHistoryEntry[]>(initialHistory);
   const [latestPing, setLatestPing] = useState<TrackingPing | null>(initialLatestPing);
 
-  // SSE — server-side yangilanishlar
+  // SSE — server-side yangilanishlar (Storybook'da disableStream=true)
   useOrderStream(order.id, {
+    enabled: !disableStream,
     onOrder: (next) => setOrder(next),
     onStatus: (entry) =>
       setHistory((prev) => {
-        // Duplicate guard — server ba'zan re-emit qilishi mumkin
         if (prev.some((e) => e.id === entry.id)) return prev;
         return [...prev, entry];
       }),

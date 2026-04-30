@@ -48,6 +48,11 @@ export interface UseOrderStreamOptions {
   onStatus?: (entry: OrderStatusHistoryEntry) => void;
   /** Yangi GPS ping — xaritada usta pin'i pozitsiyasini yangilash. */
   onPing?: (ping: TrackingPing) => void;
+  /**
+   * `false` bo'lsa EventSource ulanmaydi va state `closed` da qoladi.
+   * Storybook/test'da SSE'siz render uchun (default `true`).
+   */
+  enabled?: boolean;
 }
 
 export interface UseOrderStreamResult {
@@ -75,7 +80,8 @@ export function useOrderStream(
   orderId: string,
   options: UseOrderStreamOptions = {},
 ): UseOrderStreamResult {
-  const [state, setState] = useState<OrderStreamState>('connecting');
+  const enabled = options.enabled !== false;
+  const [state, setState] = useState<OrderStreamState>(enabled ? 'connecting' : 'closed');
   const [lastError, setLastError] = useState<string | null>(null);
 
   // Latest options'larni ref'da saqlaymiz — handler'lar har render'da
@@ -90,6 +96,7 @@ export function useOrderStream(
   const closedByUserRef = useRef(false);
 
   useEffect(() => {
+    if (!enabled) return;
     closedByUserRef.current = false;
 
     function connect() {
@@ -172,7 +179,7 @@ export function useOrderStream(
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps — optionsRef stabil
-  }, [orderId]);
+  }, [orderId, enabled]);
 
   function close() {
     closedByUserRef.current = true;

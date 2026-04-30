@@ -15,19 +15,6 @@ import type { TrackingPing } from '@/lib/db/schema/tracking-pings';
 
 import { OrderDetailClient } from './order-detail-client';
 
-// Mock useOrderStream — Storybook'da SSE talab qilinmasin
-import * as useOrderStreamMod from '@/lib/realtime/use-order-stream';
-
-if (typeof window !== 'undefined') {
-  (
-    useOrderStreamMod as { useOrderStream: typeof useOrderStreamMod.useOrderStream }
-  ).useOrderStream = () => ({
-    state: 'connected',
-    lastError: null,
-    close: () => {},
-  });
-}
-
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
 const NOW = new Date('2026-05-09T12:00:00Z');
@@ -91,6 +78,7 @@ const meta: Meta<typeof OrderDetailClient> = {
     locale: 'uz',
     proName: 'Aziz Karimov',
     proRating: 4.8,
+    disableStream: true, // Storybook — SSE connection yo'q
   },
 };
 
