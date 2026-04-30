@@ -1,0 +1,58 @@
+name: OpenAPI Drift Check
+
+# S05 T5.11 — auth API spec drift mitigation
+#
+# Zod schema'lar (lib/auth/schemas.ts) yoki registry (lib/openapi/registry.ts)
+# o'zgarib `docs/api/auth.openapi.yaml` regenerate qilinmasa, CI red.
+#
+# Lokalda fix:
+#   pnpm --filter web openapi:gen
+#   git add docs/api/auth.openapi.yaml && git commit
+
+on:
+  pull_request:
+    paths:
+      - 'apps/web/lib/auth/schemas.ts'
+      - 'apps/web/lib/openapi/**'
+      - 'apps/web/scripts/generate-openapi.ts'
+      - 'docs/api/auth.openapi.yaml'
+      - '.github/workflows/openapi-drift.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/lib/auth/schemas.ts'
+      - 'apps/web/lib/openapi/**'
+      - 'apps/web/scripts/generate-openapi.ts'
+
+jobs:
+  openapi-check:
+    name: OpenAPI spec regen + diff check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate OpenAPI spec
+        run: pnpm --filter web openapi:gen
+
+      # Agar zod schema yoki registry o'zgargan bo'lsa-yu, YAML
+      # commit qilinmagan bo'lsa — diff chiqadi → CI red.
+      - name: Detect uncommitted spec changes
+        run: |
+          if ! git diff --exit-code docs/api/auth.openapi.yaml; then
+            echo "::error::OpenAPI spec drift — zod schema o'zgargan, lekin YAML regenerate qilinmagan."
+            echo "::error::Lokalda \`pnpm --filter web openapi:gen\` ishlating va commit qiling."
+            exit 1
+          fi
+          echo "✅ OpenAPI spec is in sync with zod schemas"

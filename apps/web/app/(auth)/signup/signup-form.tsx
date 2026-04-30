@@ -4,9 +4,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import { Hammer, UserRound } from 'lucide-react';
 import { SignupSchema } from '@/lib/auth/schemas';
-import { updateMockUser } from '@/lib/auth/mock-adapter';
 import { RoleSelector } from '@/components/auth/role-selector';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -32,7 +32,8 @@ export function SignupForm() {
   const searchParams = useSearchParams();
   // A03: signup oldingi flow'dan kelgan callbackUrl'ni hurmat qiladi
   const callbackUrl = searchParams?.get('callbackUrl') ?? null;
-  const { data: session, update } = useSession();
+  const { update } = useSession();
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -48,9 +49,20 @@ export function SignupForm() {
   const selectedRole = watch('role');
 
   const onSubmit = async (data: Signup) => {
-    const phone = session?.user?.phone ?? '';
-    updateMockUser(phone, { name: data.name, role: data.role });
-    // Session'ni yangilaymiz
+    setServerError(null);
+    // T5.05: API endpoint orqali profile yangilash — provider (mock | eskiz)
+    // avtomatik dispatch
+    const res = await fetch('/api/users/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: data.name, role: data.role }),
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      setServerError(body.error ?? "Profil saqlab bo'lmadi");
+      return;
+    }
+    // Session'ni yangilaymiz (JWT'da name+role yangilanadi)
     await update({ name: data.name, role: data.role });
 
     const home = data.role === 'pro' ? '/dashboard' : '/home';
@@ -94,6 +106,12 @@ export function SignupForm() {
             </p>
           )}
         </div>
+      )}
+
+      {serverError && (
+        <p role="alert" className="text-destructive text-center text-sm">
+          {serverError}
+        </p>
       )}
 
       <Button

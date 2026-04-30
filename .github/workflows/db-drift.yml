@@ -1,0 +1,105 @@
+name: DB Schema Drift Check
+
+# S05 T5.10 — R03 (schema drift) mitigation
+#
+# Drizzle schema (lib/db/schema/*) va migration files (lib/db/migrations/*)
+# o'rtasidagi mosligini har PR'da tekshiradi. Schema o'zgarib migration
+# generate qilinmagan bo'lsa, CI red.
+#
+# Optional: agar `DATABASE_URL` secret sozlangan bo'lsa, integration
+# testlar ham ishga tushiriladi (real Neon staging branch ustida).
+
+on:
+  pull_request:
+    paths:
+      - 'apps/web/lib/db/**'
+      - 'apps/web/lib/auth/**'
+      - 'apps/web/drizzle.config.ts'
+      - '.github/workflows/db-drift.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/lib/db/**'
+      - 'apps/web/lib/auth/**'
+
+jobs:
+  schema-check:
+    name: Drizzle schema check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # `drizzle-kit check` migration files ichidagi conflict yoki
+      # schema-dan farqni aniqlaydi. DATABASE_URL placeholder yetarli
+      # (faqat fayllar tahlili).
+      - name: Drizzle migration consistency check
+        run: pnpm --filter @ustatop/web exec drizzle-kit check
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost/placeholder
+
+      # Schema o'zgargan bo'lsa, drizzle-kit generate yangi SQL fayl yaratadi.
+      # PR'da bu fayl mavjud bo'lmasa → drift. drizzle-kit "No schema changes"
+      # matnini chiqarsa schema migration files bilan mos.
+      - name: Detect uncommitted schema changes
+        run: |
+          cd apps/web
+          OUTPUT=$(pnpm exec drizzle-kit generate --name=ci_drift_check 2>&1)
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q "No schema changes"; then
+            echo "✅ No schema drift — Drizzle schema matches migration files"
+          else
+            echo "::error::Schema drift detected — yangi migration kerak."
+            echo "::error::Local'da \`pnpm --filter @ustatop/web exec drizzle-kit generate\` ishlating va commit qiling."
+            # Yaratilgan SQL faylni o'chirib qoldiramiz (commit qilinmagan)
+            ls -t lib/db/migrations/*ci_drift_check.sql 2>/dev/null | xargs -r rm -f
+            ls -t lib/db/migrations/meta/*ci_drift_check*.json 2>/dev/null | xargs -r rm -f
+            exit 1
+          fi
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost/placeholder
+
+  integration-tests:
+    name: Real DB integration tests
+    runs-on: ubuntu-latest
+    # Faqat secret sozlangan bo'lsa ishga tushadi (PR'larda DATABASE_URL
+    # default yo'q — secrets fork PR'lariga uzatilmaydi, xavfsizlik)
+    if: ${{ vars.RUN_DB_INTEGRATION == 'true' }}
+    needs: schema-check
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Migration'larni Neon staging branch'ga apply
+      - name: Apply migrations to staging DB
+        run: pnpm --filter @ustatop/web exec drizzle-kit migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+
+      # Integration testlar (eskiz-adapter.integration.test.ts)
+      - name: Run integration tests
+        run: pnpm --filter @ustatop/web exec vitest run lib/auth/eskiz-adapter.integration.test.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
