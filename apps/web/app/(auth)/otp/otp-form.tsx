@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { OtpInput } from '@/components/auth/otp-input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { mockAdapter } from '@/lib/auth/mock-adapter';
 import type { UserRole } from '@/lib/auth/schemas';
 
 const OTP_TIMEOUT = 120; // 2 daqiqa
@@ -42,7 +41,12 @@ export function OtpForm({ phone, callbackUrl }: OtpFormProps) {
   const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
   const handleResend = async () => {
-    await mockAdapter.sendOtp(phone);
+    // T5.05: API endpoint — provider (mock | eskiz) avtomatik
+    await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone }),
+    });
     setSeconds(OTP_TIMEOUT);
     setCode('');
     setError('');

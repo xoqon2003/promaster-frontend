@@ -1,28 +1,39 @@
 /**
  * NextAuth v5 canonical entry point.
  * Barcha import'lar shu fayldan bo'ladi: `import { auth, signIn, signOut } from '@/auth'`
+ *
+ * S05 T5.04 — `getOtpAdapter()` env switcher (mock | eskiz).
+ *
+ * **Edge-safe split** — `auth.config.ts` minimal config (middleware
+ * uchun), `auth.ts` (bu fayl) full config Credentials provider bilan
+ * (DB import'lar shu yerda). Middleware bu fayl'ni import qilmaydi.
+ *
+ * **`@auth/drizzle-adapter` ataylab ishlatilmadi** — bu adapter NextAuth'ning
+ * standart `users`/`accounts`/`sessions` jadvallarini yaratadi (OAuth +
+ * database session strategiyalari uchun). Bizda:
+ *   - Custom OTP Credentials provider (OAuth yo'q)
+ *   - JWT session strategiyasi (DB session yo'q)
+ *   - O'z `users` jadvali (`lib/db/schema/users.ts`) custom shape bilan
+ *     (`role` enum, `phone` E.164, `name` nullable)
+ *
+ * User persistence `getOtpAdapter().verifyOtp` ichida `findOrCreateUserByPhone`
+ * orqali boshqariladi — duplicate storage'siz, single source-of-truth.
+ *
+ * Kelajakda OAuth (MyID.uz S07) yoki revoke imkoniyatli DB session (S08+)
+ * kerak bo'lsa, `@auth/drizzle-adapter` qo'shiladi va schema migration
+ * bilan jadvallar yaratiladi.
  */
-import NextAuth, { type DefaultSession } from 'next-auth';
+import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { mockAdapter } from '@/lib/auth/mock-adapter';
+
+import { authConfig } from '@/auth.config';
+import { getOtpAdapter } from '@/lib/auth/otp-adapter';
 import { OtpVerifySchema, SessionUserSchema } from '@/lib/auth/schemas';
-import type { UserRole } from '@/lib/auth/schemas';
-
-// ─── Type augmentation ───────────────────────────────────────────────────────
-
-declare module 'next-auth' {
-  interface Session {
-    user: DefaultSession['user'] & {
-      id: string;
-      phone: string;
-      role: UserRole;
-    };
-  }
-}
 
 // ─── NextAuth config ─────────────────────────────────────────────────────────
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
     Credentials({
       id: 'otp',
@@ -36,7 +47,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         if (!parsed.success) return null;
 
         const { phone, code } = parsed.data;
-        const user = await mockAdapter.verifyOtp(phone, code);
+        // `OTP_PROVIDER` env'iga qarab mock yoki eskiz adapter chaqiriladi.
+        // Default `mock` — Eskiz aktivatsiya defer (planning Q1).
+        const user = await getOtpAdapter().verifyOtp(phone, code);
         if (!user) return null;
 
         const result = SessionUserSchema.safeParse(user);
@@ -45,6 +58,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return {
           id: result.data.id,
           name: result.data.name ?? null,
+          // NextAuth `email` maydon NOT NULL — DB user'da email yo'q,
+          // shuning uchun synthetic placeholder. Frontend'da ishlatilmaydi.
           email: `${result.data.id}@mock.ustatop.uz`,
           phone: result.data.phone,
           role: result.data.role,
@@ -52,37 +67,4 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
   ],
-
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        const u = user as typeof user & { phone: string; role: UserRole };
-        token['phone'] = u.phone;
-        token['role'] = u.role;
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.sub ?? '',
-          phone: (token['phone'] as string | undefined) ?? '',
-          role: (token['role'] as UserRole | undefined) ?? 'client',
-        },
-      };
-    },
-  },
-
-  pages: {
-    signIn: '/login',
-    error: '/login',
-  },
-
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
-  },
 });
