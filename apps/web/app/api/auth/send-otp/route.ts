@@ -13,6 +13,7 @@
  * Rate limiting: S05'da yo'q (R02 mitigation: Eskiz tier limit yetarli).
  * S08+ da Upstash Ratelimit qo'shiladi (per-phone N/min).
  */
+import * as Sentry from '@sentry/nextjs';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -47,8 +48,12 @@ export async function POST(request: Request) {
     const { expiresAt } = await getOtpAdapter().sendOtp(parsed.data.phone);
     return NextResponse.json({ ok: true, expiresAt });
   } catch (err) {
-    // Eskiz API timeout / network error — Sentry capture (T5.09 da)
-    console.error('[send-otp] adapter error:', err);
+    // Eskiz API timeout / network error — adapter ichidan o'tib chiqqan.
+    // PII filter Sentry config'da `beforeSend` orqali telefon raqamni maskaga
+    // almashtiradi (lib/sentry/scrub-pii.ts).
+    Sentry.captureException(err, {
+      tags: { area: 'auth-send-otp', provider: process.env.OTP_PROVIDER ?? 'mock' },
+    });
     return NextResponse.json(
       { error: "SMS yuborib bo'lmadi, biroz keyin urinib ko'ring" },
       { status: 502 },

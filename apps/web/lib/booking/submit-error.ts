@@ -17,6 +17,8 @@
  *  - Tarmoq: `Failed to fetch`, network errors
  *    → toast + retry
  */
+import * as Sentry from '@sentry/nextjs';
+
 import { type WizardStep } from '@/lib/hooks/use-wizard-step';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -68,6 +70,21 @@ function fieldPathToStep(path: string): WizardStep | undefined {
 export function classifySubmitError(err: unknown): SubmitErrorInfo {
   const raw = err instanceof Error ? err.message : String(err);
 
+  const info = classify(raw);
+
+  // Server-contract va network xatolarini Sentry'ga jo'natamiz —
+  // bular real bug yoki infra muammosini ko'rsatishi mumkin (T5.09).
+  // Validation/incomplete/master-not-found — user xatolari, log qilmaymiz.
+  if (info.kind === 'server-contract' || info.kind === 'network' || info.kind === 'unknown') {
+    Sentry.captureException(err, {
+      tags: { area: 'booking-submit', errorKind: info.kind },
+    });
+  }
+
+  return info;
+}
+
+function classify(raw: string): SubmitErrorInfo {
   // 1. Validation (Zod schema): "BookingDraft validation failed: contact.phone: msg; ..."
   if (raw.includes('validation failed:')) {
     const detail = raw.split('validation failed:')[1]?.trim() ?? '';
