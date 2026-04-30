@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 /**
  * Marketing landing — `/`
@@ -54,9 +54,9 @@ export default function MarketingHome() {
           >
             Kirish
           </Link>
-          <Button asChild size="sm">
-            <Link href="/signup">Boshlash</Link>
-          </Button>
+          <Link href="/signup" className={buttonVariants({ size: 'sm' })}>
+            Boshlash
+          </Link>
         </nav>
       </header>
 
@@ -80,12 +80,15 @@ export default function MarketingHome() {
             noto&apos;g&apos;ri tanlovga pul to&apos;lamang.
           </p>
           <div className="mt-2 flex flex-col items-center gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href="/signup">Mijoz sifatida boshlash</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/signup?role=pro">Usta sifatida ro&apos;yxatdan o&apos;tish</Link>
-            </Button>
+            <Link href="/signup" className={buttonVariants({ size: 'lg' })}>
+              Mijoz sifatida boshlash
+            </Link>
+            <Link
+              href="/signup?role=pro"
+              className={buttonVariants({ size: 'lg', variant: 'outline' })}
+            >
+              Usta sifatida ro&apos;yxatdan o&apos;tish
+            </Link>
           </div>
         </div>
       </section>
