@@ -61,5 +61,7 @@ const yamlStr = stringify(document, { lineWidth: 100 });
 writeFileSync(OUTPUT_PATH, yamlStr, 'utf8');
 
 const lineCount = yamlStr.split('\n').length;
+// eslint-disable-next-line no-console -- script output, not app log
 console.log(`✅ OpenAPI generated: ${OUTPUT_PATH}`);
+// eslint-disable-next-line no-console -- script output, not app log
 console.log(`   ${lineCount} lines, ${Object.keys(document.paths ?? {}).length} paths`);

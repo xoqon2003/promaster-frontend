@@ -17,7 +17,6 @@ import { OrderDetailClient } from './order-detail-client';
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
-const NOW = new Date('2026-05-09T12:00:00Z');
 const T_BASE = new Date('2026-05-09T11:00:00Z');
 
 function makeOrder(status: OrderStatus, withPro = true): Order {

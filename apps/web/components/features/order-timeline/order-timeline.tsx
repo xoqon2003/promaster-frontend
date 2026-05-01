@@ -70,7 +70,6 @@ export function OrderTimeline({ currentStatus, history, locale = 'uz', now }: Or
           const reached = reachedAt.get(status);
           const isPast = idx < currentIdx;
           const isCurrent = idx === currentIdx;
-          const isFuture = idx > currentIdx;
 
           const state: 'done' | 'current' | 'upcoming' | 'cancelled' = isCancelled
             ? 'cancelled'

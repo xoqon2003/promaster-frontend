@@ -1,0 +1,195 @@
+{
+  "common": {
+    "brand": "UstaTop.uz",
+    "tagline": "Professional ustalar marketplace",
+    "loading": "Yuklanmoqda…",
+    "error": "Xatolik yuz berdi",
+    "retry": "Qayta urinish",
+    "more": "Ko'proq",
+    "viewAll": "Hammasini ko'rish",
+    "comingSoon": "Tez orada"
+  },
+  "marketing": {
+    "nav": {
+      "categories": "Kategoriyalar",
+      "howItWorks": "Qanday ishlaydi",
+      "forPros": "Ustalar uchun",
+      "pricing": "Tariflar",
+      "about": "Biz haqimizda",
+      "blog": "Blog",
+      "login": "Kirish",
+      "signup": "Boshlash",
+      "becomePro": "Usta bo'lish"
+    },
+    "hero": {
+      "badge": "🇺🇿 O'zbekiston #1 ustalar marketplace",
+      "title": "Professional ustani 30 soniyada toping",
+      "titleAccent": "30 soniyada",
+      "subtitle": "1000+ tekshirilgan usta. Escrow himoyasi. Real-time tracking. Hech qachon noto'g'ri tanlovga pul to'lamang.",
+      "ctaPrimary": "Mijoz sifatida boshlash",
+      "ctaSecondary": "Usta bo'lib ro'yxatdan o'tish",
+      "searchPlaceholder": "Qanday usta kerak? Masalan: santexnik, elektrik, fotograf…",
+      "searchButton": "Qidirish",
+      "stats": {
+        "masters": "Tekshirilgan usta",
+        "orders": "Bajarilgan buyurtma",
+        "rating": "O'rtacha reyting",
+        "cities": "Shaharlar"
+      }
+    },
+    "categories": {
+      "title": "Mashhur kategoriyalar",
+      "subtitle": "12 ta asosiy yo'nalishdan birini tanlang yoki barchasini ko'ring",
+      "items": {
+        "repair": "Ta'mirlash",
+        "plumbing": "Santexnika",
+        "electric": "Elektrik",
+        "cleaning": "Tozalash",
+        "beauty": "Go'zallik",
+        "tutoring": "Repetitor",
+        "it": "IT xizmatlari",
+        "moving": "Yuk tashish",
+        "auto": "Avto-xizmat",
+        "events": "Tadbirlar",
+        "health": "Salomatlik",
+        "garden": "Bog'-tomorqa"
+      }
+    },
+    "howItWorks": {
+      "title": "3 oddiy qadamda",
+      "subtitle": "Buyurtma joylash juda oson — atigi 1 daqiqa",
+      "steps": {
+        "first": {
+          "title": "Xizmatni tanlang",
+          "description": "Kategoriyani tanlang yoki AI yordamchiga muammoingizni tasvirlab bering."
+        },
+        "second": {
+          "title": "Ustani kuting",
+          "description": "AI 30 soniyada eng mos 3-5 ustani tavsiya qiladi. Reyting, narx, masofa bo'yicha taqqoslang."
+        },
+        "third": {
+          "title": "Real-time kuzatib boring",
+          "description": "Usta yo'lda — siz xaritada GPS pozitsiyasini ko'rasiz. Ish bosqichlarini chat orqali boshqaring."
+        }
+      }
+    },
+    "topMasters": {
+      "title": "Eng yaxshi ustalar",
+      "subtitle": "Bu hafta eng ko'p ish olgan va eng yuqori reyting bilan baholangan professionallar",
+      "viewProfile": "Profilni ko'rish",
+      "ordersCount": "{count} ish",
+      "yearsExperience": "{years} yil tajriba"
+    },
+    "trust": {
+      "title": "Nega UstaTop?",
+      "subtitle": "Biz har bir tomonni himoya qilamiz — mijoz ham, usta ham xotirjam ishlaydi",
+      "items": {
+        "escrow": {
+          "title": "Escrow himoyasi",
+          "description": "To'lov ish tugagandan keyin ustaga o'tadi. Sifatsiz bo'lsa — pulingiz qaytariladi."
+        },
+        "myid": {
+          "title": "MyID tasdiqlash",
+          "description": "Har usta MyID.uz orqali shaxsini tasdiqlaydi. Anonim emas — mas'uliyatli."
+        },
+        "certified": {
+          "title": "Sertifikatlangan ustalar",
+          "description": "Diplom, sertifikat, ish stajini tekshiramiz. Faqat tasdiqlangan mutaxassislar."
+        },
+        "warranty": {
+          "title": "30 kun kafolat",
+          "description": "Bajarilgan ish 30 kun ichida buzilsa — usta bepul tuzatadi yoki pul qaytariladi."
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Mijozlar so'zi",
+      "subtitle": "10 000+ mijozning haqiqiy tajribasi"
+    },
+    "faq": {
+      "title": "Tez-tez so'raladigan savollar",
+      "subtitle": "Javob topa olmadingizmi? Yordam markazimizga yozing",
+      "items": [
+        {
+          "q": "UstaTop nima va qanday ishlaydi?",
+          "a": "UstaTop — O'zbekistondagi professional ustalar marketplace. Mijoz buyurtma joylaydi, AI 30 soniyada eng mos 3-5 ustani tavsiya qiladi. Mijoz tanlaydi, usta keladi, ish bajaradi. To'lov escrow orqali — ish tugagandan keyin ustaga o'tadi."
+        },
+        {
+          "q": "Xizmat haqi qancha?",
+          "a": "Mijoz uchun ro'yxatdan o'tish va buyurtma joylash bepul. Faqat ish narxi to'lanadi. Usta esa har buyurtmadan 10% komissiya to'laydi (Premium tarifda 5%)."
+        },
+        {
+          "q": "Usta sifatsiz ish qilsa nima bo'ladi?",
+          "a": "30 kun kafolat doirasida usta bepul tuzatib beradi. Agar tuzatib bermasa — escrow'dan pul to'liq qaytariladi va usta reytingidan jazo beriladi. 3 ta nizoda yutqazgan usta platformadan chiqariladi."
+        },
+        {
+          "q": "Qanday to'lov turlari qabul qilinadi?",
+          "a": "Payme, Click, Uzcard va Humo plastik kartalari, shuningdek bank o'tkazmasi va naqd to'lov (faqat usta qo'lida) qabul qilinadi."
+        },
+        {
+          "q": "Ustalar qanday tekshiriladi?",
+          "a": "Har usta MyID.uz orqali pasport tasdiqlaydi, diplom/sertifikat yuklaydi, telefon raqami va manzilini tekshirtiradi. Faollik davomida reyting va sharhlar to'planib boradi — bu trust tier'ni belgilaydi."
+        },
+        {
+          "q": "Qaysi shaharlarda ishlaysiz?",
+          "a": "Hozirda Toshkent, Samarqand, Buxoro, Andijon, Farg'ona, Namangan, Qarshi va Nukusda faolmiz. 2026 yil oxirigacha barcha 12 viloyatga yoyilamiz."
+        },
+        {
+          "q": "Mobil ilova bormi?",
+          "a": "Web sayt har bir qurilmada ishlaydi (PWA — telefon home screen'ga o'rnata olasiz). Native iOS/Android ilova 2026 yil II yarmida chiqadi."
+        },
+        {
+          "q": "Usta bo'lib ishlash uchun nima kerak?",
+          "a": "18 yoshdan katta bo'lish, MyID.uz hisob, kasbingiz bo'yicha hujjat (diplom yoki sertifikat) va smartfon. Onboarding 15 daqiqa, tasdiqlash 24 soat ichida."
+        }
+      ]
+    },
+    "ctaSection": {
+      "title": "Bugun birinchi buyurtmangizni joylashtiring",
+      "subtitle": "Ro'yxatdan o'tish 1 daqiqa. Birinchi buyurtmaga 20% chegirma.",
+      "ctaPrimary": "Bepul boshlash",
+      "ctaSecondary": "Demo ko'rish"
+    },
+    "footer": {
+      "tagline": "O'zbekistonning eng professional ustalar ekotizimi.",
+      "columns": {
+        "product": {
+          "title": "Mahsulot",
+          "categories": "Kategoriyalar",
+          "topMasters": "Top ustalar",
+          "howItWorks": "Qanday ishlaydi",
+          "pricing": "Tariflar",
+          "mobile": "Mobil ilova"
+        },
+        "company": {
+          "title": "Kompaniya",
+          "about": "Biz haqimizda",
+          "careers": "Vakansiyalar",
+          "press": "Matbuot",
+          "blog": "Blog",
+          "contact": "Aloqa"
+        },
+        "legal": {
+          "title": "Yuridik",
+          "terms": "Foydalanish shartlari",
+          "privacy": "Maxfiylik siyosati",
+          "cookies": "Cookies",
+          "escrow": "Escrow shartnomasi",
+          "disputes": "Nizolar tartibi"
+        },
+        "support": {
+          "title": "Yordam",
+          "helpCenter": "Yordam markazi",
+          "forPros": "Ustalar uchun",
+          "becomeProCta": "Usta bo'ling",
+          "telegram": "Telegram bot",
+          "status": "Tizim holati"
+        }
+      },
+      "language": "Til",
+      "copyright": "© {year} UstaTop.uz — Barcha huquqlar himoyalangan",
+      "address": "Toshkent, O'zbekiston",
+      "madeIn": "O'zbekistonda yaratildi"
+    }
+  }
+}

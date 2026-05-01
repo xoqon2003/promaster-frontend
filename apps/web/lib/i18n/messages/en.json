@@ -1,0 +1,195 @@
+{
+  "common": {
+    "brand": "UstaTop.uz",
+    "tagline": "Professional masters marketplace",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "more": "More",
+    "viewAll": "View all",
+    "comingSoon": "Coming soon"
+  },
+  "marketing": {
+    "nav": {
+      "categories": "Categories",
+      "howItWorks": "How it works",
+      "forPros": "For pros",
+      "pricing": "Pricing",
+      "about": "About",
+      "blog": "Blog",
+      "login": "Log in",
+      "signup": "Get started",
+      "becomePro": "Become a pro"
+    },
+    "hero": {
+      "badge": "🇺🇿 Uzbekistan's #1 masters marketplace",
+      "title": "Find a professional master in 30 seconds",
+      "titleAccent": "in 30 seconds",
+      "subtitle": "1000+ verified masters. Escrow protection. Real-time tracking. Never pay for a bad choice again.",
+      "ctaPrimary": "Get started as a client",
+      "ctaSecondary": "Sign up as a master",
+      "searchPlaceholder": "What kind of master do you need? E.g. plumber, electrician, photographer…",
+      "searchButton": "Search",
+      "stats": {
+        "masters": "Verified masters",
+        "orders": "Completed orders",
+        "rating": "Average rating",
+        "cities": "Cities"
+      }
+    },
+    "categories": {
+      "title": "Popular categories",
+      "subtitle": "Pick one of 12 main directions or view all",
+      "items": {
+        "repair": "Repair",
+        "plumbing": "Plumbing",
+        "electric": "Electrical",
+        "cleaning": "Cleaning",
+        "beauty": "Beauty",
+        "tutoring": "Tutoring",
+        "it": "IT services",
+        "moving": "Moving",
+        "auto": "Auto service",
+        "events": "Events",
+        "health": "Health",
+        "garden": "Garden"
+      }
+    },
+    "howItWorks": {
+      "title": "In 3 simple steps",
+      "subtitle": "Booking is incredibly simple — just 1 minute",
+      "steps": {
+        "first": {
+          "title": "Pick a service",
+          "description": "Choose a category or describe the problem to our AI assistant."
+        },
+        "second": {
+          "title": "Get matched",
+          "description": "AI recommends 3-5 best masters in 30 seconds. Compare by rating, price, distance."
+        },
+        "third": {
+          "title": "Track in real-time",
+          "description": "Master is on the way — see GPS position on the map. Manage stages via chat."
+        }
+      }
+    },
+    "topMasters": {
+      "title": "Top masters",
+      "subtitle": "This week's highest-rated and most-booked professionals",
+      "viewProfile": "View profile",
+      "ordersCount": "{count} jobs",
+      "yearsExperience": "{years} yrs exp"
+    },
+    "trust": {
+      "title": "Why UstaTop?",
+      "subtitle": "We protect both sides — clients and masters work with peace of mind",
+      "items": {
+        "escrow": {
+          "title": "Escrow protection",
+          "description": "Payment goes to the master only after the job is done. If quality fails — you get a full refund."
+        },
+        "myid": {
+          "title": "MyID verification",
+          "description": "Every master verifies identity via MyID.uz. Not anonymous — accountable."
+        },
+        "certified": {
+          "title": "Certified masters",
+          "description": "We verify diplomas, certificates and work experience. Only confirmed specialists."
+        },
+        "warranty": {
+          "title": "30-day warranty",
+          "description": "If completed work fails within 30 days — master fixes free or you get a refund."
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Customer voices",
+      "subtitle": "Real experiences from 10,000+ clients"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Can't find your answer? Reach out to our help center",
+      "items": [
+        {
+          "q": "What is UstaTop and how does it work?",
+          "a": "UstaTop is a professional masters marketplace in Uzbekistan. A client creates an order, AI matches 3-5 best masters in 30 seconds. Client picks one, master arrives and does the job. Payment is held in escrow and released to the master after completion."
+        },
+        {
+          "q": "How much does the service cost?",
+          "a": "Sign-up and ordering are free for clients. You only pay the job price. Masters pay a 10% commission per order (5% on Premium tier)."
+        },
+        {
+          "q": "What if the master does a poor job?",
+          "a": "Within the 30-day warranty, the master will fix it for free. If they refuse — escrow refunds you fully and the master is penalized in rating. After 3 lost disputes the master is removed from the platform."
+        },
+        {
+          "q": "What payment methods are accepted?",
+          "a": "Payme, Click, Uzcard and Humo cards, bank transfer and cash (only handed to the master)."
+        },
+        {
+          "q": "How are masters verified?",
+          "a": "Each master verifies passport via MyID.uz, uploads diploma/certificate, confirms phone and address. Over time, ratings and reviews accumulate — this determines the trust tier."
+        },
+        {
+          "q": "Which cities do you cover?",
+          "a": "Currently active in Tashkent, Samarkand, Bukhara, Andijan, Fergana, Namangan, Karshi and Nukus. By end of 2026 we'll cover all 12 regions."
+        },
+        {
+          "q": "Is there a mobile app?",
+          "a": "The site works on any device (PWA — you can install it on the home screen). Native iOS/Android app launches H2 2026."
+        },
+        {
+          "q": "What does it take to become a master?",
+          "a": "18+ age, a MyID.uz account, a relevant document (diploma or certificate) and a smartphone. Onboarding takes 15 minutes, verification within 24 hours."
+        }
+      ]
+    },
+    "ctaSection": {
+      "title": "Place your first order today",
+      "subtitle": "Sign-up takes 1 minute. 20% off your first order.",
+      "ctaPrimary": "Start free",
+      "ctaSecondary": "Watch demo"
+    },
+    "footer": {
+      "tagline": "Uzbekistan's most professional masters ecosystem.",
+      "columns": {
+        "product": {
+          "title": "Product",
+          "categories": "Categories",
+          "topMasters": "Top masters",
+          "howItWorks": "How it works",
+          "pricing": "Pricing",
+          "mobile": "Mobile app"
+        },
+        "company": {
+          "title": "Company",
+          "about": "About",
+          "careers": "Careers",
+          "press": "Press",
+          "blog": "Blog",
+          "contact": "Contact"
+        },
+        "legal": {
+          "title": "Legal",
+          "terms": "Terms of use",
+          "privacy": "Privacy policy",
+          "cookies": "Cookies",
+          "escrow": "Escrow agreement",
+          "disputes": "Disputes process"
+        },
+        "support": {
+          "title": "Support",
+          "helpCenter": "Help center",
+          "forPros": "For pros",
+          "becomeProCta": "Become a pro",
+          "telegram": "Telegram bot",
+          "status": "System status"
+        }
+      },
+      "language": "Language",
+      "copyright": "© {year} UstaTop.uz — All rights reserved",
+      "address": "Tashkent, Uzbekistan",
+      "madeIn": "Made in Uzbekistan"
+    }
+  }
+}

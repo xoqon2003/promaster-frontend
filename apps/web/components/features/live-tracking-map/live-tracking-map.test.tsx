@@ -21,7 +21,7 @@ vi.mock('next/dynamic', () => ({
   },
 }));
 
-// eslint-disable-next-line import/first
+// Import after vi.mock — required by Vitest hoisting semantics.
 import { LiveTrackingMap } from './live-tracking-map';
 
 const CLIENT = { lat: 41.31, lng: 69.27 };

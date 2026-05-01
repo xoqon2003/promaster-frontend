@@ -72,6 +72,15 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Root layout — static `lang="uz"` so /_not-found can prerender.
+ *
+ * The actual UI locale (UZ / RU / EN) is handled by `(marketing)/layout.tsx`
+ * via `NextIntlClientProvider` reading the `ustatop_locale` cookie. The
+ * `<html lang>` attribute stays at the primary market default — RU/EN
+ * visitors still get translated content; only the lang attribute is
+ * static. This keeps /_not-found and /error static-prerenderable.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
