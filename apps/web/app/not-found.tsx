@@ -2,6 +2,11 @@ import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+// Force dynamic rendering — `<Providers>` (next-auth SessionProvider)
+// can't prerender under Next 15 + React 19 + next-auth beta.31 (useState
+// returns null in static export). Dynamic rendering bypasses the issue.
+export const dynamic = 'force-dynamic';
+
 export default function NotFound() {
   return (
     <main className="bg-background flex min-h-screen flex-col items-center justify-center px-6 text-center">

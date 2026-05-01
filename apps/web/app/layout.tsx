@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Manrope } from 'next/font/google';
 import { Providers } from '@/components/providers';
-import { getLocale } from '@/lib/i18n/get-locale';
 import './globals.css';
 
 const inter = Inter({
@@ -73,18 +72,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+/**
+ * Root layout — static `lang="uz"` so /_not-found can prerender.
+ *
+ * The actual UI locale (UZ / RU / EN) is handled by `(marketing)/layout.tsx`
+ * via `NextIntlClientProvider` reading the `ustatop_locale` cookie. The
+ * `<html lang>` attribute stays at the primary market default — RU/EN
+ * visitors still get translated content; only the lang attribute is
+ * static. This keeps /_not-found and /error static-prerenderable.
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
   return (
-    <html
-      lang={locale}
-      suppressHydrationWarning
-      className={`${inter.variable} ${manrope.variable}`}
-    >
+    <html lang="uz" suppressHydrationWarning className={`${inter.variable} ${manrope.variable}`}>
       <body className="font-sans antialiased">
         <Providers>{children}</Providers>
       </body>

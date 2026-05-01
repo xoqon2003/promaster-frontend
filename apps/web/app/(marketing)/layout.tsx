@@ -5,6 +5,10 @@ import { MarketingFooter } from '@/components/marketing/marketing-footer';
 import { MarketingHeader } from '@/components/marketing/marketing-header';
 import { getLocale } from '@/lib/i18n/get-locale';
 
+// Cookie-based locale → dynamic rendering (per-request).
+// Static gen would cache one locale forever for all visitors.
+export const dynamic = 'force-dynamic';
+
 /**
  * Marketing layout — public surface (landing, about, pricing, blog, ...).
  *
