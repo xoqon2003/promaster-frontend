@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "UstaTop",
+    "slug": "ustatop",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "ustatop",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#2463eb"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "uz.ustatop.app"
+    },
+    "android": {
+      "package": "uz.ustatop.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#2463eb"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

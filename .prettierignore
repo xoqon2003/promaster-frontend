@@ -7,3 +7,8 @@ coverage
 *.min.js
 pnpm-lock.yaml
 apps/web/components.json
+
+# Mobile (Expo + NativeWind v4) — prettier-plugin-tailwindcss is pinned
+# to a v3 insiders build and crashes when parsing the mobile package's
+# tailwind preset. Skip mobile for prettier until plugin upgrades.
+apps/mobile/**
