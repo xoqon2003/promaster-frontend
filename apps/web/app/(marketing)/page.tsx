@@ -78,12 +78,10 @@ export default async function MarketingHomePage() {
     <>
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger -- trusted server-generated JSON-LD
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
       />
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger -- trusted server-generated JSON-LD
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 

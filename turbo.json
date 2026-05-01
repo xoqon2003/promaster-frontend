@@ -28,5 +28,26 @@
       "env": ["CI"]
     }
   },
-  "globalEnv": ["CI", "NODE_ENV", "ANALYZE", "MOCK_OTP", "AUTH_SECRET", "NEXTAUTH_URL"]
+  "globalEnv": [
+    "CI",
+    "NODE_ENV",
+    "ANALYZE",
+    "MOCK_OTP",
+    "AUTH_SECRET",
+    "NEXTAUTH_URL",
+    "DATABASE_URL",
+    "OTP_PROVIDER",
+    "ESKIZ_EMAIL",
+    "ESKIZ_PASSWORD",
+    "ESKIZ_API_BASE",
+    "ESKIZ_SENDER",
+    "SENTRY_SMOKE_ENABLED",
+    "SENTRY_DSN",
+    "SENTRY_AUTH_TOKEN",
+    "SENTRY_ORG",
+    "SENTRY_PROJECT",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "NEXT_RUNTIME"
+  ]
 }

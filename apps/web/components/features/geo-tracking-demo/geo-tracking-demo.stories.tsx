@@ -20,7 +20,7 @@ interface MockOptions {
 }
 
 function makeGeolocationDecorator({ flow }: MockOptions): Decorator {
-  return (Story) => {
+  const GeoDecorator: Decorator = (Story) => {
     if (typeof window === 'undefined') return <Story />;
 
     const original = navigator.geolocation;
@@ -86,6 +86,8 @@ function makeGeolocationDecorator({ flow }: MockOptions): Decorator {
       </div>
     );
   };
+  (GeoDecorator as { displayName?: string }).displayName = `GeoDecorator(${flow})`;
+  return GeoDecorator;
 }
 
 function CleanupOnUnmount({ original }: { original: Geolocation }) {

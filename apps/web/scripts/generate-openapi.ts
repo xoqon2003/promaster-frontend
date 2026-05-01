@@ -61,5 +61,5 @@ const yamlStr = stringify(document, { lineWidth: 100 });
 writeFileSync(OUTPUT_PATH, yamlStr, 'utf8');
 
 const lineCount = yamlStr.split('\n').length;
-console.log(`✅ OpenAPI generated: ${OUTPUT_PATH}`);
-console.log(`   ${lineCount} lines, ${Object.keys(document.paths ?? {}).length} paths`);
+console.warn(`✅ OpenAPI generated: ${OUTPUT_PATH}`);
+console.warn(`   ${lineCount} lines, ${Object.keys(document.paths ?? {}).length} paths`);

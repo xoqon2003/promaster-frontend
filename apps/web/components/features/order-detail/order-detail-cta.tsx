@@ -35,7 +35,7 @@ export function OrderDetailCta({ order, locale, onCancel }: CtaProps) {
     setError(null);
     try {
       await onCancel(reason || undefined);
-    } catch (err) {
+    } catch {
       setError(MESSAGES[locale].errors.cancelFailed);
       setSubmitting(false);
       return;

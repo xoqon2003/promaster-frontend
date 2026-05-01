@@ -1,3 +1,4 @@
+/* global process */
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
 

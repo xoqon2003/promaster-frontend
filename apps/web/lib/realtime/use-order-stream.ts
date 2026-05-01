@@ -178,7 +178,7 @@ export function useOrderStream(
         sourceRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps — optionsRef stabil
+    // optionsRef stabil — onEvent/onError'ni deps'ga qo'shmaymiz (re-subscribe oldini olish)
   }, [orderId, enabled]);
 
   function close() {
