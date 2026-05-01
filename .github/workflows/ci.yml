@@ -29,14 +29,18 @@ jobs:
       - name: Type check
         run: pnpm check-types
 
+      # Playwright browsers must be present BEFORE unit tests because
+      # the storybook-vitest project runs stories in a real chromium
+      # via @vitest/browser-playwright. Without binaries the storybook
+      # test project fails immediately.
+      - name: Install Playwright browsers
+        run: pnpm --filter @ustatop/web exec playwright install --with-deps chromium
+
       - name: Unit tests
         run: pnpm test
 
       - name: Build
         run: pnpm build
-
-      - name: Install Playwright browsers
-        run: pnpm --filter @ustatop/web exec playwright install --with-deps chromium
 
       - name: E2E tests
         run: pnpm --filter @ustatop/web exec playwright test
