@@ -1,18 +1,13 @@
-'use client';
-
-import dynamic from 'next/dynamic';
+import ClientProviders from './client-providers';
 
 /**
- * Barcha client-only provider'lar (SessionProvider, ThemeProvider) lazy yuklanadi.
- * SSG prerender vaqtida ular ishga tushmaydi — bu Next 15 + React 19 +
- * next-auth beta.31 `useState is null` muammosidan himoyalaydi.
+ * Server-render-friendly provider wrapper.
  *
- * Runtime'da (hydration'dan keyin) ular normal ishlaydi.
+ * `ClientProviders` is a `'use client'` boundary — children still SSR
+ * normally, only the providers hydrate on the client. The earlier
+ * `dynamic({ ssr: false })` workaround killed all SSR
+ * (`BAILOUT_TO_CLIENT_SIDE_RENDERING` on the live URL).
  */
-const ClientProviders = dynamic(() => import('./client-providers'), {
-  ssr: false,
-});
-
 interface ProvidersProps {
   children: React.ReactNode;
 }
